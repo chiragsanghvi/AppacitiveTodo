@@ -21,16 +21,42 @@
 			<p>Powered by <a href="http://www.appacitive.com">Appacitive</a> using <a href="https://github.com/chiragsanghvi/JavascriptSDK">JavaScript SDK</a>.<br /><br />
 		</footer>
 
+	    <script type="text/template" id="login-template">
+	      <header id="header"></header>
+	      <div class="login">
+	        <div class="login-form">
+	          <div id="header-info">Login</div>
+	          <div class="error" style="display:none"></div>
+	          <input type="text" id="login-username" placeholder="Username *" />
+	          <input type="password" id="login-password" placeholder="Password *" />
+	          <button id="login">Log In</button>
+	          <button id="signup">Sign Up</button>
+	        </div>
+
+	        <div class="signup-form hidden">
+	          <div id="header-info">Signup</div>
+	          <div class="error" style="display:none"></div>
+	          <input type="text" id="signup-username" placeholder="Enter Username *" />
+	          <input type="password" id="signup-password" placeholder="Enter Password *" />
+			  <input type="text" id="signup-firstname" placeholder="Enter name *" />
+	          <input type="email" id="signup-email" placeholder="Enter email *" />
+	          <button id="signup">Sign Up</button>
+	          <button id="cancel">Cancel</button>
+	        </div>
+	      </div>
+	    </script>
+		
+
 		<script type="text/template" id="todos-template">
-			<div id="user-info">
-        		Welcome back <%= Appacitive.User.current().get("username") %> (<a href="javascript:void(0);" class="log-out">Log out</a>)
-      		</div>
-      		<div class="section">
+			<div class="section">
 	      		<header id="header">
 					<input id="new-todo" placeholder="What needs to be done?" maxlength="400" autofocus>
 				</header>
 				<section id="main">
 					<input id="toggle-all" type="checkbox">
+					<div id="user-info">
+		        		Welcome back <%= Appacitive.Users.current().get("username") %> (<a href="javascript:void(0);" class="log-out">Log out</a>)
+		      		</div>
 					<label for="toggle-all">Mark all as complete</label>
 					<ul id="todo-list"></ul>
 				</section>
@@ -66,6 +92,8 @@
 		<script src="js/models/todo.js"></script>
 		<script src="js/collections/todos.js"></script>
 		<script src="js/views/todo-view.js"></script>
+		<script src="js/views/todos-view.js"></script>
+		<script src="js/views/login-view.js"></script>
 		<script src="js/views/app-view.js"></script>
 		<script src="js/routers/router.js"></script>
 		<script src="js/app.js"></script>

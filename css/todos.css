@@ -88,7 +88,7 @@ input[type="checkbox"] {
 }
 
 #header {
-    padding-top: 15px;
+    padding-top: 25px;
     border-radius: inherit;
 }
 
@@ -108,11 +108,10 @@ input[type="checkbox"] {
     filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#9d8b83', EndColorStr='#847670');
     border-top-left-radius: 1px;
     border-top-right-radius: 1px;
+    height: 30px;   
 }
 
-.section #header:before {
- height: 30px;   
-}
+
 
 #new-todo,
 .edit {
@@ -445,6 +444,11 @@ label[for='toggle-all'] {
     border-radius: 5px;
     margin-bottom: 25px;
     font-family: "Helvetica Neue";
+    cursor: pointer;
+}
+
+#todoapp .main .signup-form #cancel, #todoapp .main .login-form #signup {
+    margin-left: 10px;
 }
 
 #todoapp .main .login .error {
@@ -454,9 +458,21 @@ label[for='toggle-all'] {
     margin-bottom: 15px;
 }
 
-#todoapp .main #user-info {
+#todoapp .main #user-info, #todoapp .main #header-info {
     padding: 5px 10px 0px;
     border-top: 1px solid #ededed;
     margin-bottom: 0px;
+    color: gainsboro;
+    font-weight: bolder;
     text-align: right;
+    position: absolute;
+    top: -91px;   
+    border: none;
+    right: 0;
+    outline: 0;
+    z-index: 10;
 }
+
+#todoapp .main #header-info { text-align: center ;}
+
+#todoapp .main #user-info a { cursor: pointer; color: rgb(70, 69, 69);}

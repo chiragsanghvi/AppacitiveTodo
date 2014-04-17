@@ -1,4 +1,4 @@
-/*global Backbone */
+/*global Backbone, , Appacitive */
 var app = app || {};
 
 (function () {

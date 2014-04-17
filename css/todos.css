@@ -74,7 +74,7 @@ input[type="checkbox"] {
     position: absolute;
     top: -120px;
     width: 100%;
-    font-size: 70px;
+    font-size: 40pt;
     font-weight: bold;
     text-align: center;
     color: #b3b3b3;
@@ -108,6 +108,10 @@ input[type="checkbox"] {
     filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#9d8b83', EndColorStr='#847670');
     border-top-left-radius: 1px;
     border-top-right-radius: 1px;
+}
+
+.section #header:before {
+ height: 30px;   
 }
 
 #new-todo,
@@ -410,147 +414,49 @@ label[for='toggle-all'] {
     display: none;
 }
 
-hr {
-    margin: 20px 0;
-    border: 0;
-    border-top: 1px dashed #C5C5C5;
-    border-bottom: 1px dashed #F7F7F7;
+#todoapp .main .login {
+    width: 350px;
+    margin: 45px auto 25px auto;
 }
 
-.learn a {
+#todoapp .main .login h2 {
     font-weight: normal;
-    text-decoration: none;
-    color: #b83f45;
+    font-size: 25px;
+    margin-bottom: 20px;
 }
 
-.learn a:hover {
-    text-decoration: underline;
-    color: #787e7e;
+#todoapp .main .login input {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 20px;
+    padding: 5px;
+    width: 340px;;
 }
 
-.learn h3,
-.learn h4,
-.learn h5 {
-    margin: 10px 0;
-    font-weight: 500;
-    line-height: 1.2;
-    color: #000;
+#todoapp .main .login .signup-form {
+    margin-top: 25px;
 }
 
-.learn h3 {
-    font-size: 24px;
-}
-
-.learn h4 {
-    font-size: 18px;
-}
-
-.learn h5 {
-    margin-bottom: 0;
-    font-size: 14px;
-}
-
-.learn ul {
-    padding: 0;
-    margin: 0 0 30px 25px;
-}
-
-.learn li {
-    line-height: 20px;
-}
-
-.learn p {
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 1.3;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.quote {
-    border: none;
-    margin: 20px 0 60px 0;
-}
-
-.quote p {
-    font-style: italic;
-}
-
-.quote p:before {
-    content: '“';
-    font-size: 50px;
-    opacity: .15;
-    position: absolute;
-    top: -20px;
-    left: 3px;
-}
-
-.quote p:after {
-    content: '”';
-    font-size: 50px;
-    opacity: .15;
-    position: absolute;
-    bottom: -42px;
-    right: 3px;
-}
-
-.quote footer {
-    position: absolute;
-    bottom: -40px;
-    right: 0;
-}
-
-.quote footer img {
-    border-radius: 3px;
-}
-
-.quote footer a {
-    margin-left: 5px;
-    vertical-align: middle;
-}
-
-.speech-bubble {
-    position: relative;
-    padding: 10px;
-    background: rgba(0, 0, 0, .04);
+#todoapp .main .login button {
+    padding: 5px 10px;
+    background: #eee;
+    font-size: 20px;
+    border: 1px solid #ccc;
     border-radius: 5px;
+    margin-bottom: 25px;
+    font-family: "Helvetica Neue";
 }
 
-.speech-bubble:after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    right: 30px;
-    border: 13px solid transparent;
-    border-top-color: rgba(0, 0, 0, .04);
+#todoapp .main .login .error {
+    border: 1px solid red;
+    background: #FDEFF0;
+    padding: 5px 15px;
+    margin-bottom: 15px;
 }
 
-.learn-bar > .learn {
-    position: absolute;
-    width: 272px;
-    top: 8px;
-    left: -300px;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: rgba(255, 255, 255, .6);
-    -webkit-transition-property: left;
-    transition-property: left;
-    -webkit-transition-duration: 500ms;
-    transition-duration: 500ms;
-}
-
-@media (min-width: 899px) {
-    .learn-bar {
-        width: auto;
-        margin: 0 0 0 300px;
-    }
-
-    .learn-bar > .learn {
-        left: 8px;
-    }
-
-    .learn-bar #todoapp {
-        width: 550px;
-        margin: 130px auto 40px auto;
-    }
+#todoapp .main #user-info {
+    padding: 5px 10px 0px;
+    border-top: 1px solid #ededed;
+    margin-bottom: 0px;
+    text-align: right;
 }

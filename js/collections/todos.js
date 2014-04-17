@@ -42,6 +42,4 @@ var app = app || {};
 
 	// Create our global collection of **Todos**.
 	app.todos = new Todos();
-
-	app.todos.query().fields(["title", "completed", "order"]);
 })();

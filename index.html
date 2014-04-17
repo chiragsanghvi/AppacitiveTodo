@@ -10,21 +10,33 @@
 	</head>
 	<body>
 		<section id="todoapp">
-			<header id="header">
-				<h1>todos</h1>
-				<input id="new-todo" placeholder="What needs to be done?" maxlength="400" autofocus>
-			</header>
-			<section id="main">
-				<input id="toggle-all" type="checkbox">
-				<label for="toggle-all">Mark all as complete</label>
-				<ul id="todo-list"></ul>
-			</section>
-			<footer id="footer"></footer>
+			<div>
+		        <h1>Appacitive Todo List</h1>
+		    </div>
+		    <div class="main"></div>
 		</section>
+
 		<footer id="info">
 			<p>Double-click to edit a todo</p>
 			<p>Powered by <a href="http://www.appacitive.com">Appacitive</a> using <a href="https://github.com/chiragsanghvi/JavascriptSDK">JavaScript SDK</a>.<br /><br />
 		</footer>
+
+		<script type="text/template" id="todos-template">
+			<div id="user-info">
+        		Welcome back <%= Appacitive.User.current().get("username") %> (<a href="javascript:void(0);" class="log-out">Log out</a>)
+      		</div>
+      		<div class="section">
+	      		<header id="header">
+					<input id="new-todo" placeholder="What needs to be done?" maxlength="400" autofocus>
+				</header>
+				<section id="main">
+					<input id="toggle-all" type="checkbox">
+					<label for="toggle-all">Mark all as complete</label>
+					<ul id="todo-list"></ul>
+				</section>
+				<footer id="footer"></footer>
+			</div>
+		</script>
 		<script type="text/template" id="item-template">
 			<div class="view">
 				<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>

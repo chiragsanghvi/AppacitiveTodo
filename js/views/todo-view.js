@@ -1,4 +1,4 @@
-/*global Backbone, jQuery, _, ENTER_KEY, ESC_KEY */
+/*global Backbone, jQuery, _, ENTER_KEY, ESC_KEY, Appacitive */
 var app = app || {};
 
 (function ($) {
@@ -37,13 +37,14 @@ var app = app || {};
 
 		// Re-render the titles of the todo item.
 		render: function () {
-			this.$el.html(this.template(this.model.toJSON()));
+			this.$el.html(this.template(this.model.getParsed()));
 			this.$el.toggleClass('completed', this.model.tryGet('completed', false, 'boolean'));
 			this.toggleVisible();
 			this.$input = this.$('.edit');
 			return this;
 		},
 
+		// Render/hide todo item
 		toggleVisible: function () {
 			this.$el.toggleClass('hidden', this.isHidden());
 		},
@@ -76,9 +77,8 @@ var app = app || {};
 			// longer being edited. Relying on the CSS class here has the
 			// benefit of us not having to maintain state in the DOM and the
 			// JavaScript logic.
-			if (!this.$el.hasClass('editing')) {
-				return;
-			}
+			if (!this.$el.hasClass('editing')) return;
+			
 
 			if (trimmedValue && trimmedValue.length > 0) {
 				this.model.set('title', trimmedValue);

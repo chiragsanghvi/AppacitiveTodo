@@ -1,4 +1,4 @@
-/*global Backbone */
+/*global Backbone , Appacitive*/
 var app = app || {};
 
 (function () {
@@ -37,6 +37,12 @@ var app = app || {};
 		// Todos are sorted by their original insertion order.
 		comparator: function (todo) {
 			return todo.get('order', 'integer');
+		},
+
+		connectAndCreate: function(todo) {
+			var todo = new app.Todo(todo);
+			var owner = new app.Owner(todo).save();
+			this.add(todo, { sort: true });
 		}
 	});
 

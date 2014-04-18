@@ -17,23 +17,27 @@
 		</section>
 
 		<footer id="info">
-			<p>Double-click to edit a todo</p>
+			<p id="help-info" class="hidden">Double-click to edit a todo</p>
 			<p>Powered by <a href="http://www.appacitive.com">Appacitive</a> using <a href="https://github.com/chiragsanghvi/JavascriptSDK">JavaScript SDK</a>.<br /><br />
 		</footer>
 
+		<!--Login and signup template-->
 	    <script type="text/template" id="login-template">
 	      <header id="header"></header>
 	      <div class="login">
-	        <div class="login-form">
+	        <form class="login-form">
 	          <div id="header-info">Login</div>
 	          <div class="error" style="display:none"></div>
+	          <div class="success" style="display:none"></div>
+	          <div class="info" style="display:none"></div>
 	          <input type="text" id="login-username" placeholder="Username *" />
 	          <input type="password" id="login-password" placeholder="Password *" />
 	          <button id="login">Log In</button>
 	          <button id="signup">Sign Up</button>
-	        </div>
+	          <a href="javascript:void(0);" id="forgot">Forgot Password ?</a>
+	        </form>
 
-	        <div class="signup-form hidden">
+	        <form class="signup-form hidden">
 	          <div id="header-info">Signup</div>
 	          <div class="error" style="display:none"></div>
 	          <input type="text" id="signup-username" placeholder="Enter Username *" />
@@ -42,27 +46,32 @@
 	          <input type="email" id="signup-email" placeholder="Enter email *" />
 	          <button id="signup">Sign Up</button>
 	          <button id="cancel">Cancel</button>
-	        </div>
+	        </form>
 	      </div>
 	    </script>
 		
-
+	    <!--Main todos template-->
 		<script type="text/template" id="todos-template">
 			<div class="section">
 	      		<header id="header">
-					<input id="new-todo" placeholder="What needs to be done?" maxlength="400" autofocus>
+					<input id="new-todo" placeholder="What needs to be done?" disabled=disabled maxlength="400" autofocus>
 				</header>
 				<section id="main">
 					<input id="toggle-all" type="checkbox">
 					<div id="user-info">
-		        		Welcome back <%= Appacitive.Users.current().get("username") %> (<a href="javascript:void(0);" class="log-out">Log out</a>)
+		        		Welcome back <%= Appacitive.Users.current().get("firstname") %> <%= Appacitive.Users.current().get("lastname") %> ( <a href="javascript:void(0);" class="log-out">Log out</a> )
 		      		</div>
-					<label for="toggle-all">Mark all as complete</label>
-					<ul id="todo-list"></ul>
+					<ul id="todo-list">
+						<li >
+  							<div class="loader">Fetching items</div>
+						</li>
+					</ul>
 				</section>
 				<footer id="footer"></footer>
 			</div>
 		</script>
+		
+		<!--Single item template-->
 		<script type="text/template" id="item-template">
 			<div class="view">
 				<input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
@@ -71,6 +80,8 @@
 			</div>
 			<input class="edit" value="<%- title %>">
 		</script>
+
+		<!--Stats template to display count of items left and done-->
 		<script type="text/template" id="stats-template">
 			<span id="todo-count"><strong><%= remaining %></strong> <%= remaining === 1 ? 'item' : 'items' %> left</span>
 			<ul id="filters">
@@ -88,6 +99,7 @@
 			<button id="clear-completed">Clear completed (<%= completed %>)</button>
 			<% } %>
 		</script>
+
 		<script src="js/infra/backbone.js"></script>
 		<script src="js/models/todo.js"></script>
 		<script src="js/collections/todos.js"></script>

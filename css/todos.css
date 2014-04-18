@@ -163,6 +163,7 @@ label[for='toggle-all'] {
     width: 40px;
     text-align: center;
     /* Mobile Safari */
+    cursor: pointer;
     border: none;
 }
 
@@ -224,6 +225,7 @@ label[for='toggle-all'] {
     -ms-appearance: none;
     -o-appearance: none;
     appearance: none;
+    cursor: pointer;
 }
 
 #todo-list li .toggle:after {
@@ -251,6 +253,7 @@ label[for='toggle-all'] {
     line-height: 1.2;
     -webkit-transition: color 0.4s;
     transition: color 0.4s;
+    cursor: pointer;
 }
 
 #todo-list li.completed label {
@@ -271,6 +274,7 @@ label[for='toggle-all'] {
     color: #a88a8a;
     -webkit-transition: all 0.2s;
     transition: all 0.2s;
+    cursor: pointer;
 }
 
 #todo-list li .destroy:hover {
@@ -362,6 +366,7 @@ label[for='toggle-all'] {
     padding: 0 10px;
     border-radius: 3px;
     box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 #clear-completed:hover {
@@ -442,7 +447,7 @@ label[for='toggle-all'] {
     font-size: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     font-family: "Helvetica Neue";
     cursor: pointer;
 }
@@ -454,6 +459,20 @@ label[for='toggle-all'] {
 #todoapp .main .login .error {
     border: 1px solid red;
     background: #FDEFF0;
+    padding: 5px 15px;
+    margin-bottom: 15px;
+}
+
+#todoapp .main .login .success {
+    border: 1px solid green;
+    background: rgb(237, 250, 237);
+    padding: 5px 15px;
+    margin-bottom: 15px;
+}
+
+#todoapp .main .login .info {
+    border: 1px solid rgb(170, 215, 233);
+    background: rgb(231, 241, 245);
     padding: 5px 15px;
     margin-bottom: 15px;
 }
@@ -472,6 +491,20 @@ label[for='toggle-all'] {
     outline: 0;
     z-index: 10;
 }
+
+#todoapp .main ul li .loader {
+    background: url('images/loader.gif') no-repeat 100px 3px;
+    width: inherit;
+    background-size: 20px;
+    margin: auto;
+    height: 20px;
+    margin-left: 200px;
+    margin-top: 10px;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+#todoapp .main .login-form #forgot { display: block; font-size: 13px; color: rgb(70, 69, 69);}
 
 #todoapp .main #header-info { text-align: center ;}
 

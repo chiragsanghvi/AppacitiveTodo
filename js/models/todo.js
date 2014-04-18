@@ -25,6 +25,40 @@ var app = app || {};
 		toggle: function () {
 			this.set('completed', !this.tryGet('completed', false, 'boolean'));
 			this.save();
+		},
+
+		// To cast toJSON response
+		// Cast completed into boolean and order into integer type
+		getParsed: function() {
+			var attrs = this.toJSON();
+			attrs.completed = this.get('completed', 'boolean');
+			attrs.order = this.get('order', 'integer');
+			return attrs;
+		}
+	});
+
+	// Owner connection model
+	// ----------
+
+	// Our basic **owner** relation model, which will connects logged-in user
+	// to todo model
+	app.Owner = Appacitive.Connection.extend("owner", {
+		constructor: function(todo) {
+			// To avoid other parsing conflicts
+			if (todo instanceof app.Todo) {
+				var attrs = {
+					endpoints: [{
+						label: 'user',
+						object: Appacitive.Users.current()
+					}, {
+						label: 'todo',
+						object: todo
+					}]
+				};
+			}
+			//Invoke internal constructor
+    		Appacitive.Connection.call(this, attrs); 
+	    	
 		}
 	});
 })();

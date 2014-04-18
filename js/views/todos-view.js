@@ -15,7 +15,7 @@ var app = app || {};
 		el: '.main',
 
 		// Main todos template
-        todosTemplate: _.template($("#todos-template").html()),
+        todosTemplate: $("#todos-template").html(),
 
 		// Our template for the line of statistics at the bottom of the app.
 		statsTemplate: _.template($('#stats-template').html()),
@@ -30,9 +30,11 @@ var app = app || {};
 
 		// At initialization we bind to the relevant events on the `Todos`
 		// collection, when items are added or changed. Kick things off by
-		// loading any preexisting todos that might be saved in *localStorage*.
+		// loading any preexisting todos for logged-in user from Appacitive
 		initialize: function () {
-			this.$el.html(this.todosTemplate);
+			this.$el.html(_.template(this.todosTemplate));
+
+			$('#help-info').show();
 
 			app.todos.query().fields(["title", "completed", "order"]);
 
@@ -48,15 +50,29 @@ var app = app || {};
 			this.listenTo(app.todos, 'filter', this.filterAll);
 			this.listenTo(app.todos, 'all', this.render);
 
+			var self = this;
+
+			// Set query type for app.todos
+			// Query will be getConnectedObjects in respect to current user for relation owner
+			// This'll allow us to fetch todo objects connected to user by owner relation
+			var query = Appacitive.Users.current().getConnectedObjects({
+				 relation : 'owner'
+  			});
+
+  			app.todos.query(query);
+
 			// Suppresses 'add' events with {reset: true} and prevents the app view
 			// from being re-rendered for every model. Only renders when the 'reset'
 			// event is triggered at the end of the fetch.
-			app.todos.fetch({ reset: true, sort: true });
+			app.todos.fetch({ reset: true, sort: true }).then(function() {
+				self.$input.removeAttr('disabled');
+			});
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
 		// of the app doesn't change.
 		render: function () {
+
 			var completed = app.todos.completed().length;
 			var remaining = app.todos.remaining().length;
 
@@ -74,14 +90,16 @@ var app = app || {};
 					.filter('[href="#/' + (app.TodoFilter || '') + '"]')
 					.addClass('selected');
 			} else {
-				this.$main.hide();
-				this.$footer.hide();
+				//this.$main.hide();
+				//this.$footer.hide();
 			}
 
 			this.allCheckbox.checked = !remaining;
+			if (remaining) this.allCheckbox.title = "Mark all as complete";
+			else this.allCheckbox.title = "Mark all as incomplete";
 		},
 
-		// Logs out the user and shows the login view
+		// Logs out the user from Appacitvie and shows the login view
 	    logOut: function(e) {
 	      Appacitive.Users.logout(true);
 	      new app.LogInView();
@@ -110,7 +128,7 @@ var app = app || {};
 			app.todos.each(this.filterOne, this);
 		},
 
-		// Generate the attributes for a new Todo item.
+		// Generate the attributes for a new Todo item to save on Appacitive.
 		newAttributes: function () {
 			return {
 				title: this.$input.val().trim(),
@@ -119,11 +137,11 @@ var app = app || {};
 			};
 		},
 
-		// If you hit return in the main input field, create new **Todo** model,
-		// persisting it to *localStorage*.
+		// If you hit return in the main input field, create new **Todo** model and connecting it to loggedin user using owner relation,
+		// and persist it on Appacitive server
 		createOnEnter: function (e) {
 			if (e.which === ENTER_KEY && this.$input.val().trim().length > 0) {
-				app.todos.create(this.newAttributes());
+				app.todos.connectAndCreate(this.newAttributes());
 				this.$input.val('');
 			}
 		},
@@ -134,6 +152,7 @@ var app = app || {};
 			return false;
 		},
 
+		// Mark all items either completed or not and persist them on Appacitive
 		toggleAllComplete: function () {
 			var completed = this.allCheckbox.checked;
 

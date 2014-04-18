@@ -39,15 +39,13 @@ input[type="checkbox"] {
 }
 
 #todoapp {
-    background: #fff;
     background: rgba(255, 255, 255, 0.9);
     margin: 130px 0 40px 0;
     border: 1px solid #ccc;
     position: relative;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2),
-                0 25px 50px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2),                 0 25px 50px 0 rgba(0, 0, 0, 0.15);
 }
 
 #todoapp:before {
@@ -506,6 +504,6 @@ label[for='toggle-all'] {
 
 #todoapp .main .login-form #forgot { display: block; font-size: 13px; color: rgb(70, 69, 69);}
 
-#todoapp .main #header-info { text-align: center ;}
+#todoapp .main #header-info { text-align: center ; top: 0px; width: 100%;}
 
 #todoapp .main #user-info a { cursor: pointer; color: rgb(70, 69, 69);}

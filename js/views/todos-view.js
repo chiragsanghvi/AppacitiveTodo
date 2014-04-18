@@ -56,7 +56,8 @@ var app = app || {};
 			// Query will be getConnectedObjects in respect to current user for relation owner
 			// This'll allow us to fetch todo objects connected to user by owner relation
 			var query = Appacitive.Users.current().getConnectedObjects({
-				 relation : 'owner'
+				 relation : 'owner',
+				 pageSize: 200
   			});
 
   			app.todos.query(query);

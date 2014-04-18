@@ -162,7 +162,7 @@ var app = app || {};
           new app.TodosView();
           self.undelegateEvents();
       }, function(error) {
-          self.showError(error.message);
+          self.showError('signup', error.message);
           self.$(".signup-form button").removeAttr("disabled");
           self.$('.signup-form #login').html("Sign Up");
       });
@@ -187,7 +187,7 @@ var app = app || {};
           self.showSuccess("Reset password mail sent.");
           self.$(".login-form button").removeAttr("disabled");
       }, function(status) {
-          self.showError(status.message);
+          self.showError('login', status.message);
           self.$(".login-form button").removeAttr("disabled");
       })
       return false;

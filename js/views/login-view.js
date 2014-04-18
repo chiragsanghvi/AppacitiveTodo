@@ -183,7 +183,7 @@ var app = app || {};
 
       this.showInfo("Sending reset password mail. Please wait..!");
 
-      Appacitive.Users.sendResetPasswordEmail(username, 'Reset your Appacitive Javascript ToDo App password').then(function() {
+      Appacitive.Users.sendResetPasswordEmail(username, 'Reset your Appacitive ToDo App password').then(function() {
           self.showSuccess("Reset password mail sent.");
           self.$(".login-form button").removeAttr("disabled");
       }, function(status) {

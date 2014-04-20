@@ -4,10 +4,13 @@ var app = app || {};
 var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
+Appacitive.config.apiBaseUrl = "http://appacitivenext.cloudapp.net:1877/v1.0/";
+
+
 Appacitive.initialize({
-	apikey: 'sjzGiu1HcfuzvZAFNWQNsrizoflOUhA2qHxycfQ4Pd0=', 
+	apikey: '3clnQYQrR3+2cpcBSl5ISC9ut+3ygqu3Kc5aQoZuCDw=', 
     env: 'sandbox', 
-    appId: '56564813671825740'
+    appId: '56846109403906314'
 });
 
 $(function () {

@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time   : Fri Apr 18 10:03:43 IST 2014
+ * Build time   : Sun Apr 20 17:15:26 IST 2014
  */
 "use strict";
 
@@ -455,7 +455,7 @@ var global = {};
             });
             request.prevHeaders = request.headers;
             request.headers = [];
-            request.headers.push({ key:'Content-Type', value: 'text/plain' });
+            request.headers.push({ key:'Content-Type', value: 'text/plain; charset=utf-8' });
             request.method = 'POST';
 
             if (request.data) body.b = request.data;
@@ -811,12 +811,14 @@ var global = {};
             var error;
             if (response && response.responseText) {
                 try {
-                  error = JSON.parse(response.responseText);
-                } catch (e) {}
+                    error = JSON.parse(response.responseText);
+                } catch (e) { }
+            } else {
+                response = { responseText: '' };
             }
 
             error = error || { code: response.status, message: response.responseText, referenceid: response.headers["TransactionId"] };
-            global.Appacitive.logs.logRequest(request, response, error, 'error');
+            global.Appacitive.logs.logRequest(request, error, error, 'error');
             request.promise.reject(error, request.entity);
         };
         _inner.onError = this.onError;
@@ -863,6 +865,7 @@ var global = {};
                             global.Appacitive.http.send(request);
                         }
                     } else {
+
                         if (response && ((response.status && response.status.code && (response.status.code == '19036' || response.status.code == '421')) || (response.code && (response.code == '19036' || response.code == '421')))) {
                             global.Appacitive.Users.logout();
                         } else {
@@ -917,7 +920,7 @@ var global = {};
             responseTime : request.timeTakenInMilliseconds,
             headers: {},
             request: null,
-            response: response.responseText,
+            response: response,
             description: request.description
         };
 
@@ -1353,6 +1356,13 @@ var global = {};
                 }
             }
         };
+        this.usergroup = {
+            usergroupServiceUrl: 'usergroup',
+
+            getUpdateUrl: function(groupId) {
+                return String.format('{0}/{1}/members', this.usergroupServiceUrl, groupId);
+            }
+        }
 
     };
 
@@ -1700,6 +1710,260 @@ Depends on  NOTHING
 
     global.Appacitive.eventManager = new EventManager();
 
+})(global);/**
+ * Standalone extraction of Backbone.Events, no external dependency required.
+ * Degrades nicely when Backone/underscore are already available in the current
+ * global context.
+ *
+ * Note that docs suggest to use underscore's `_.extend()` method to add Events
+ * support to some given object. A `mixin()` method has been added to the Events
+ * prototype to avoid using underscore for that sole purpose:
+ *
+ *     var myEventEmitter = BackboneEvents.mixin({});
+ *
+ * Or for a function constructor:
+ *
+ *     function MyConstructor(){}
+ *     MyConstructor.prototype.foo = function(){}
+ *     BackboneEvents.mixin(MyConstructor.prototype);
+ *
+ * (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
+ * (c) 2013 Nicolas Perriault
+ */
+/* global exports:true, define, module */
+(function(global) {
+  var root = global,
+      breaker = {},
+      nativeForEach = Array.prototype.forEach,
+      hasOwnProperty = Object.prototype.hasOwnProperty,
+      slice = Array.prototype.slice,
+      idCounter = 0;
+
+  // Returns a partial implementation matching the minimal API subset required
+  // by Backbone.Events
+  function miniscore() {
+    return {
+      keys: Object.keys,
+
+      uniqueId: function(prefix) {
+        var id = ++idCounter + '';
+        return prefix ? prefix + id : id;
+      },
+
+      has: function(obj, key) {
+        return hasOwnProperty.call(obj, key);
+      },
+
+      each: function(obj, iterator, context) {
+        if (obj == null) return;
+        if (nativeForEach && obj.forEach === nativeForEach) {
+          obj.forEach(iterator, context);
+        } else if (obj.length === +obj.length) {
+          for (var i = 0, l = obj.length; i < l; i++) {
+            if (iterator.call(context, obj[i], i, obj) === breaker) return;
+          }
+        } else {
+          for (var key in obj) {
+            if (this.has(obj, key)) {
+              if (iterator.call(context, obj[key], key, obj) === breaker) return;
+            }
+          }
+        }
+      },
+
+      once: function(func) {
+        var ran = false, memo;
+        return function() {
+          if (ran) return memo;
+          ran = true;
+          memo = func.apply(this, arguments);
+          func = null;
+          return memo;
+        };
+      }
+    };
+  }
+
+  var _ = miniscore(), Events;
+
+  // Backbone.Events
+  // ---------------
+
+  // A module that can be mixed in to *any object* in order to provide it with
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Events);
+  //     object.on('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
+  //
+  Events = {
+
+    // Bind an event to a `callback` function. Passing `"all"` will bind
+    // the callback to all events fired.
+    on: function(name, callback, context) {
+      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      this._events || (this._events = {});
+      var events = this._events[name] || (this._events[name] = []);
+      events.push({callback: callback, context: context, ctx: context || this});
+      return this;
+    },
+
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
+    once: function(name, callback, context) {
+      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+      return this.on(name, once, context);
+    },
+
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `name` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, callback, context) {
+      var retain, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
+        this._events = {};
+        return this;
+      }
+
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (events = this._events[name]) {
+          this._events[name] = retain = [];
+          if (callback || context) {
+            for (j = 0, k = events.length; j < k; j++) {
+              ev = events[j];
+              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
+                  (context && context !== ev.context)) {
+                retain.push(ev);
+              }
+            }
+          }
+          if (!retain.length) delete this._events[name];
+        }
+      }
+
+      return this;
+    },
+
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
+    trigger: function(name) {
+      if (!this._events) return this;
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, arguments);
+      return this;
+    },
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(obj, name, callback) {
+      var listeners = this._listeners;
+      if (!listeners) return this;
+      var deleteListener = !name && !callback;
+      if (typeof name === 'object') callback = this;
+      if (obj) (listeners = {})[obj._listenerId] = obj;
+      for (var id in listeners) {
+        listeners[id].off(name, callback, this);
+        if (deleteListener) delete this._listeners[id];
+      }
+      return this;
+    }
+
+  };
+
+  // Regular expression used to split event strings.
+  var eventSplitter = /\s+/;
+
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
+  var eventsApi = function(obj, action, name, rest) {
+    if (!name) return true;
+
+    // Handle event maps.
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
+      }
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; i++) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+      return false;
+    }
+
+    return true;
+  };
+
+  // A difficult-to-believe, but optimized internal dispatch function for
+  // triggering events. Tries to keep the usual cases speedy (most internal
+  // Backbone events have 3 arguments).
+  var triggerEvents = function(events, args) {
+    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+    switch (args.length) {
+      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
+      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
+      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
+      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
+      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    }
+  };
+
+  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
+
+  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+  // listen to an event in another object ... keeping track of what it's
+  // listening to.
+  _.each(listenMethods, function(implementation, method) {
+    Events[method] = function(obj, name, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+      listeners[id] = obj;
+      if (typeof name === 'object') callback = this;
+      obj[implementation](name, callback, this);
+      return this;
+    };
+  });
+
+  // Aliases for backwards compatibility.
+  Events.bind   = Events.on;
+  Events.unbind = Events.off;
+
+  // Mixin utility
+  Events.mixin = function(proto) {
+    var exports = ['on', 'once', 'off', 'trigger', 'stopListening', 'listenTo', 'listenToOnce', 'bind', 'unbind'];
+    _.each(exports, function(name) {
+      proto[name] = this[name];
+    }, this);
+    return proto;
+  };
+
+  //changed to match with Appacitive
+  root.Appacitive.Events = Events;
+ 
 })(global);(function (global) {
 
     "use strict";
@@ -1708,7 +1972,7 @@ Depends on  NOTHING
         apiBaseUrl: 'https://apis.appacitive.com/v1.0/'
     };
 
-    if (typeof XDomainRequest != 'undefined') {
+    if (global.navigator && (global.navigator.userAgent.indexOf('MSIE 8') != -1 || global.navigator.userAgent.indexOf('MSIE 9') != -1)) {
         global.Appacitive.config.apiBaseUrl = window.location.protocol + '//apis.appacitive.com/v1.0/';
     }
 
@@ -1874,11 +2138,16 @@ Depends on  NOTHING
         };
 
         this.removeUserAuthHeader = function(makeApiCall, options) {
-            
+
+            var promise = global.Appacitive.Promise.buildPromise(options);
+
+            if (!makeApiCall) {
+                global.Appacitive.User.trigger('logout', {});
+            }
+
             global.Appacitive.localStorage.remove('Appacitive-User');
             if (_authToken && makeApiCall) {
                 try {
-                    var promise = new global.Appacitive.Promise();
 
                     var _request = new global.Appacitive.HttpRequest(options);
                     _request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getInvalidateTokenUrl(_authToken);
@@ -1906,7 +2175,7 @@ Depends on  NOTHING
                 global.Appacitive.localStorage.remove('Appacitive-UserToken');
                 global.Appacitive.localStorage.remove('Appacitive-UserTokenExpiry');
                 global.Appacitive.localStorage.remove('Appacitive-UserTokenDate');
-                return global.Appacitive.Promise().fulfill();
+                return promise.fulfill();
             }
         };
 
@@ -2032,7 +2301,7 @@ Depends on  NOTHING
 
 
 // compulsory http plugin
-// attaches the appacitive environment headers
+// attaches the appacitive environment headers and other event plugins
 (function (global){
 
     "use strict";
@@ -2045,6 +2314,9 @@ Depends on  NOTHING
             req.headers.push({ key: 'e', value: global.Appacitive.Session.environment() });
         }
     });
+
+
+   global.Appacitive.Events.mixin(global.Appacitive);
 
 })(global);
 (function (global) {
@@ -3440,260 +3712,6 @@ Depends on  NOTHING
         };
     };
 
-})(global);/**
- * Standalone extraction of Backbone.Events, no external dependency required.
- * Degrades nicely when Backone/underscore are already available in the current
- * global context.
- *
- * Note that docs suggest to use underscore's `_.extend()` method to add Events
- * support to some given object. A `mixin()` method has been added to the Events
- * prototype to avoid using underscore for that sole purpose:
- *
- *     var myEventEmitter = BackboneEvents.mixin({});
- *
- * Or for a function constructor:
- *
- *     function MyConstructor(){}
- *     MyConstructor.prototype.foo = function(){}
- *     BackboneEvents.mixin(MyConstructor.prototype);
- *
- * (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
- * (c) 2013 Nicolas Perriault
- */
-/* global exports:true, define, module */
-(function(global) {
-  var root = global,
-      breaker = {},
-      nativeForEach = Array.prototype.forEach,
-      hasOwnProperty = Object.prototype.hasOwnProperty,
-      slice = Array.prototype.slice,
-      idCounter = 0;
-
-  // Returns a partial implementation matching the minimal API subset required
-  // by Backbone.Events
-  function miniscore() {
-    return {
-      keys: Object.keys,
-
-      uniqueId: function(prefix) {
-        var id = ++idCounter + '';
-        return prefix ? prefix + id : id;
-      },
-
-      has: function(obj, key) {
-        return hasOwnProperty.call(obj, key);
-      },
-
-      each: function(obj, iterator, context) {
-        if (obj == null) return;
-        if (nativeForEach && obj.forEach === nativeForEach) {
-          obj.forEach(iterator, context);
-        } else if (obj.length === +obj.length) {
-          for (var i = 0, l = obj.length; i < l; i++) {
-            if (iterator.call(context, obj[i], i, obj) === breaker) return;
-          }
-        } else {
-          for (var key in obj) {
-            if (this.has(obj, key)) {
-              if (iterator.call(context, obj[key], key, obj) === breaker) return;
-            }
-          }
-        }
-      },
-
-      once: function(func) {
-        var ran = false, memo;
-        return function() {
-          if (ran) return memo;
-          ran = true;
-          memo = func.apply(this, arguments);
-          func = null;
-          return memo;
-        };
-      }
-    };
-  }
-
-  var _ = miniscore(), Events;
-
-  // Backbone.Events
-  // ---------------
-
-  // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback
-  // functions to an event; `trigger`-ing an event fires all callbacks in
-  // succession.
-  //
-  //     var object = {};
-  //     _.extend(object, Backbone.Events);
-  //     object.on('expand', function(){ alert('expanded'); });
-  //     object.trigger('expand');
-  //
-  Events = {
-
-    // Bind an event to a `callback` function. Passing `"all"` will bind
-    // the callback to all events fired.
-    on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events || (this._events = {});
-      var events = this._events[name] || (this._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || this});
-      return this;
-    },
-
-    // Bind an event to only be triggered a single time. After the first time
-    // the callback is invoked, it will be removed.
-    once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-      var self = this;
-      var once = _.once(function() {
-        self.off(name, once);
-        callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.on(name, once, context);
-    },
-
-    // Remove one or many callbacks. If `context` is null, removes all
-    // callbacks with that function. If `callback` is null, removes all
-    // callbacks for the event. If `name` is null, removes all bound
-    // callbacks for all events.
-    off: function(name, callback, context) {
-      var retain, ev, events, names, i, l, j, k;
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-      if (!name && !callback && !context) {
-        this._events = {};
-        return this;
-      }
-
-      names = name ? [name] : _.keys(this._events);
-      for (i = 0, l = names.length; i < l; i++) {
-        name = names[i];
-        if (events = this._events[name]) {
-          this._events[name] = retain = [];
-          if (callback || context) {
-            for (j = 0, k = events.length; j < k; j++) {
-              ev = events[j];
-              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                  (context && context !== ev.context)) {
-                retain.push(ev);
-              }
-            }
-          }
-          if (!retain.length) delete this._events[name];
-        }
-      }
-
-      return this;
-    },
-
-    // Trigger one or many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name
-    // (unless you're listening on `"all"`, which will cause your callback to
-    // receive the true name of the event as the first argument).
-    trigger: function(name) {
-      if (!this._events) return this;
-      var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
-      return this;
-    },
-
-    // Tell this object to stop listening to either specific events ... or
-    // to every object it's currently listening to.
-    stopListening: function(obj, name, callback) {
-      var listeners = this._listeners;
-      if (!listeners) return this;
-      var deleteListener = !name && !callback;
-      if (typeof name === 'object') callback = this;
-      if (obj) (listeners = {})[obj._listenerId] = obj;
-      for (var id in listeners) {
-        listeners[id].off(name, callback, this);
-        if (deleteListener) delete this._listeners[id];
-      }
-      return this;
-    }
-
-  };
-
-  // Regular expression used to split event strings.
-  var eventSplitter = /\s+/;
-
-  // Implement fancy features of the Events API such as multiple event
-  // names `"change blur"` and jQuery-style event maps `{change: action}`
-  // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
-      }
-      return false;
-    }
-
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
-      }
-      return false;
-    }
-
-    return true;
-  };
-
-  // A difficult-to-believe, but optimized internal dispatch function for
-  // triggering events. Tries to keep the usual cases speedy (most internal
-  // Backbone events have 3 arguments).
-  var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
-    switch (args.length) {
-      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
-      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
-      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
-      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
-      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
-    }
-  };
-
-  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
-
-  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-  // listen to an event in another object ... keeping track of what it's
-  // listening to.
-  _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
-      var listeners = this._listeners || (this._listeners = {});
-      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
-      listeners[id] = obj;
-      if (typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
-      return this;
-    };
-  });
-
-  // Aliases for backwards compatibility.
-  Events.bind   = Events.on;
-  Events.unbind = Events.off;
-
-  // Mixin utility
-  Events.mixin = function(proto) {
-    var exports = ['on', 'once', 'off', 'trigger', 'stopListening', 'listenTo', 'listenToOnce', 'bind', 'unbind'];
-    _.each(exports, function(name) {
-      proto[name] = this[name];
-    }, this);
-    return proto;
-  };
-
-  //changed to match with Appacitive
-  root.Appacitive.Events = Events;
- 
 })(global);var ArrayProto = Array.prototype;
 var ObjectProto = Object.prototype;
 
@@ -3895,7 +3913,7 @@ var extend = function(protoProps, staticProps) {
         var _fields = '';
 
         //Fileds to be ignored while update operation
-        var _ignoreTheseFields = ["__id", "__revision", "__endpointa", "__endpointb", "__createdby", "__lastmodifiedby", "__type", "__relationtype", "__typeid", "__relationid", "__utcdatecreated", "__utclastupdateddate", "__tags", "__authType", "__authtype", "__link"];
+        var _ignoreTheseFields = ["__id", "__revision", "__endpointa", "__endpointb", "__createdby", "__lastmodifiedby", "__type", "__relationtype", "__typeid", "__relationid", "__utcdatecreated", "__utclastupdateddate", "__tags", "__authType", "__link", "__acls"];
         
         var _allowObjectSetOperations = ["__link", "__endpointa", "__endpointb"];
 
@@ -4049,6 +4067,7 @@ var extend = function(protoProps, staticProps) {
         this.getRemovedTags = function() { return _removetags; };
 
         var setMutliItems = function(key, value, op, options) {
+
             if (!key || !_type.isString(key) ||  key.length === 0  || key.trim().indexOf('__') == 0 || key.trim().indexOf('$') === 0 || value == undefined || value == null) return this; 
             
             key = key.toLowerCase();
@@ -4112,6 +4131,11 @@ var extend = function(protoProps, staticProps) {
         var _getChanged = function(isInternal) {
             var isDirty = false;
             var changeSet = JSON.parse(JSON.stringify(_snapshot));
+
+            for (var p in changeSet) {
+                if (p[0] == '$') delete changeSet[p];
+            }
+
             for (var property in object) {
                 if (object[property] == null || object[property] == undefined) {
                     changeSet[property] = null;
@@ -4173,8 +4197,9 @@ var extend = function(protoProps, staticProps) {
             }
             else delete changeSet["__attributes"];
 
-            for (var p in changeSet) {
-                if (p[0] == '$') delete changeSet[p];
+            if (that.type == 'object') {
+                var acls = that._aclFactory.getChanged();
+                if (acls) changeSet['__acls'] = acls;
             }
 
             if (isDirty && !Object.isEmpty(changeSet)) return changeSet;
@@ -4328,9 +4353,10 @@ var extend = function(protoProps, staticProps) {
             if (options && !options.silent) {
                 var changed = _getChanged();
 
-                if(changed[key]) {
+                if (changed[key] || (_ignoreTheseFields.indexOf(key) != -1)) {
+                    var value = changed[key] || object[key];
                     // Trigger all relevant attribute changes.
-                    that.trigger('change:' + key, that, changed[key], {});
+                    that.trigger('change:' + key, that, value, {});
                     that.trigger('change', that, options);
                 }
             }
@@ -4519,7 +4545,7 @@ var extend = function(protoProps, staticProps) {
         var _create = function(options) {
 
             var type = that.type;
-            if (object.__type &&  ( object.__type.toLowerCase() == 'user' ||  object.__type.toLowerCase() == 'device')) {
+            if (object.__type &&  (object.__type.toLowerCase() == 'user' ||  object.__type.toLowerCase() == 'device')) {
                 type = object.__type.toLowerCase()
             }
 
@@ -4529,6 +4555,12 @@ var extend = function(protoProps, staticProps) {
             }
             if (object["__revision"]) delete object["__revision"];
             
+            if (type == 'object') {
+                var acls = that._aclFactory.getChanged();
+                if (acls) object.__acls = acls;
+            }
+
+
             var request = new global.Appacitive._Request({
                 method: 'PUT',
                 type: type,
@@ -4539,15 +4571,18 @@ var extend = function(protoProps, staticProps) {
                 entity: that,
                 onSuccess: function(data) {
                     var savedState = null;
+
                     if (data && data[type]) {
                         savedState = data[type];
 
                         _snapshot = savedState;
                         object.__id = savedState.__id;
-                        
+
                         _merge();
 
                         if (that.type == 'connection') that.parseConnection();
+                        else that._aclFactory.merge();
+
                         global.Appacitive.eventManager.fire(that.entityType + '.' + type + '.created', that, { object : that });
 
                         that.created = true;
@@ -4597,8 +4632,11 @@ var extend = function(protoProps, staticProps) {
                     entity: that,
                     onSuccess: function(data) {
                         if (data && data[type]) {
+                            
                             _snapshot = data[type];
                             
+                            that._aclFactory.merge();
+
                             _merge();
                             
                             delete that.created;
@@ -4681,6 +4719,8 @@ var extend = function(protoProps, staticProps) {
                 opts = {};
             }
 
+            if (!opts.wait) triggerDestroy(opts);
+
             // if the object does not have __id set, 
             // just call success
             // else delete the object
@@ -4688,12 +4728,8 @@ var extend = function(protoProps, staticProps) {
             if (!object['__id']) return new global.Appacitive.Promise.buildPromise(opts).fulfill();
 
             var type = this.type;
-            if (object.__type &&  ( object.__type.toLowerCase() == 'user' ||  object.__type.toLowerCase() == 'device')) {
-                type = object.__type.toLowerCase()
-            }
-
-            if (!opts.wait)  triggerDestroy(opts);
-
+            if (object.__type &&  ( object.__type.toLowerCase() == 'user' ||  object.__type.toLowerCase() == 'device')) type = object.__type.toLowerCase()
+            
             var request = new global.Appacitive._Request({
                 method: 'DELETE',
                 type: type,
@@ -4813,6 +4849,250 @@ var extend = function(protoProps, staticProps) {
 
     "use strict";
 
+    var accessTypes = ['allow', 'deny'];
+
+    var states = ['create', 'read', 'update', 'delete', 'manageaccess'];
+
+    var validatePermission = function(permissions) {
+        var res = [];
+        permissions.forEach(function(p) {
+            if (_type.isString(p) && states.indexOf(p.toLowerCase()) != -1) {
+                res.push(p.toLowerCase());
+            }
+        });
+
+        return res;
+    };
+
+    global.Appacitive._Acl = function(o, setSnapshot) {
+
+        var acls = o || [];     
+
+        if (!_type.isArray(acls)) acls = [];
+
+        var _snapshot = {} ;
+
+        if (setSnapshot) {
+            _snapshot = JSON.parse(JSON.stringify(acls));
+        }
+
+        acls = JSON.parse(JSON.stringify(acls));
+
+        this.acls = acls;
+
+        var changed = [];
+
+        var setPermission = function(access, type, sid, permissions) {
+            if (!sid) throw new Error("Specify valid user or usergroup");
+
+            if ((sid instanceof global.Appacitive.Object) && sid.typeName == 'user' && !sid.isNew()) {
+                sid = sid.id();
+            } 
+
+            var acl = acls.filter(function(a) { return  (a.sid == sid && a.type == type ); }), exists = false;
+
+            if (!acl || acl.length == 0) {
+                acl = { sid: sid, type: type, deny: [], allow: [] };
+                acls.push(acl);
+            }
+            else acl = acl[0];
+            
+            if (!acl.allow) acl.allow = [];
+            if (!acl.deny) acl.deny = [];
+
+            permissions = validatePermission(permissions);
+
+            var chAcl = changed.filter(function(a) { return (a.sid == sid && a.type == type); });
+            if (!chAcl || chAcl.length == 0) {
+                chAcl = { sid: sid, type: type };
+                changed.push(chAcl);
+            } else chAcl = chAcl[0];
+            
+            permissions.forEach(function(p) {
+                for (var i = 0; i < accessTypes.length; i = i + 1) {
+                    var ind = acl[accessTypes[i]].indexOf(p);
+                    if (ind != -1) {
+                        acl[accessTypes[i]].splice(ind, 1);
+                        break;
+                    }
+                }
+
+                if (access != 'inherit') {
+                    acl[access].push(p);
+                }
+
+                chAcl[p] = access;
+            });
+
+            return this;
+        };
+
+        var setPermissions = function(access, type, sids, permissions) {
+            if (!sids) throw new Error("Please provide valid id or name for setting acls");
+            if (!permissions) throw new Error("Please provide valid access permissions for setting acls");
+
+            if (!_type.isArray(permissions)) permissions = [permissions];
+
+            if (_type.isArray(sids)) {
+                sids.forEach(function(sid) {
+                    setPermission(access, type, sid, permissions);
+                });
+            } else {
+                setPermission(access, type, sids, permissions); 
+            }
+
+            return this;
+        };
+
+        var setUpOps = function() {
+
+            acls.allowUser = function(sids, permissions) {
+                return setPermissions.apply(this, ['allow', 'user', sids, permissions]);
+            };
+
+            acls.allowGroup = function(sids, permissions) {
+                return setPermissions.apply(this, ['allow', 'usergroup', sids, permissions]);
+            };
+
+            acls.denyUser = function(sids, permissions) {
+                return setPermissions.apply(this, ['deny', 'user', sids, permissions]);
+            };
+
+            acls.denyGroup = function(sids, permissions) {
+                return setPermissions.apply(this, ['deny', 'usergroup', sids, permissions]);
+            };
+
+            acls.resetUser = function(sids, permissions) {
+                return setPermissions.apply(this, ['inherit', 'user', sids, permissions]);
+            };
+
+            acls.resetGroup = function(sids, permissions) {
+                return setPermissions.apply(this, ['inherit', 'usergroup', sids, permissions]);
+            };
+
+            acls.allowAnonymous = function(permissions) {
+                return setPermissions.apply(this, ['allow', 'usergroup', ['anonymous'], permissions]);
+            };
+
+            acls.denyAnonymous = function(permissions) {
+                return setPermissions.apply(this, ['deny', 'usergroup', ['anonymous'], permissions]);
+            };
+
+            acls.resetAnonymous = function(permissions) {
+                return setPermissions.apply(this, ['inherit', 'usergroup', ['anonymous'], permissions]);
+            };
+
+            acls.allowLoggedIn = function(permissions) {
+                return setPermissions.apply(this, ['allow', 'usergroup', ['anonymous'], permissions]);
+            };
+
+            acls.denyLoggedIn = function(permissions) {
+                return setPermissions.apply(this, ['deny', 'usergroup', ['anonymous'], permissions]);
+            };
+
+            acls.resetLoggedIn = function(permissions) {
+                return setPermissions.apply(this, ['inherit', 'usergroup', ['anonymous'], permissions]);
+            };
+        };
+
+        this._rollback = function() {
+            changed = [];
+            acls = JSON.parse(JSON.stringify(_snapshot));
+            setUpOps();
+            return this;
+        };
+
+        this.getChanged = function() {
+            var chAcls = [];
+            changed.forEach(function(a) {
+                var acl = { sid: a.sid, type: a.type, allow: [], deny: [], inherit: [] };
+                states.forEach(function(s) {
+                    if (a[s]) {
+                        acl[a[s]].push(s);
+                    }
+                });
+
+                accessTypes.forEach(function(at) {
+                    if (acl[at].length == 0) delete acl[at];
+                });
+
+                if (acl['inherit'].length == 0) delete acl['inherit'];
+
+                chAcls.push(acl);
+            });
+
+            if (chAcls.length == 0) return null;
+
+            return chAcls;
+        };
+
+
+        this.merge = function() {
+            changed = [];
+            return this;
+        };
+
+        setUpOps();
+
+        return this;
+    };
+
+    var _groupManager = function() {
+        
+        var _addRemoveMembers = function(op, groupName, members) {
+
+            if (!groupName || !_type.isString(groupName) ||  groupName.length === 0) throw new Error("Please specify valid groupname"); 
+
+            if (!_type.isArray(members)) members = [members];
+
+            var cmd = {};
+
+            cmd[op] = [];
+
+            members.forEach(function(m) {
+                if (!m) return;
+
+                if ((m instanceof global.Appacitive.Object)  && m.typeName == 'user' && !m.isNew()) {
+                    cmd[op].push(m.id());
+                } else {
+                    cmd[op].push(m);
+                }
+            })
+
+
+            if (cmd[op].length == 0) throw new Error("Please specify valid members as second argument");
+
+            var request = new global.Appacitive._Request({
+                method: 'POST',
+                type: 'usergroup',
+                op: 'getUpdateUrl',
+                args: [groupName],
+                data: cmd,
+                entity: this,
+                onSuccess: function(data) {
+                    request.promise.fulfill(data);
+                }
+            });
+
+            return request.send();
+        };
+
+        this.addMembers = function(groupName, members) {
+            return _addRemoveMembers('add', groupName, members);
+        };
+
+        this.removeMembers = function(groupName, members) {
+            return _addRemoveMembers('remove', groupName, members);
+        };
+    };
+
+    global.Appacitive.Group = new _groupManager();
+
+})(global);
+    (function (global) {
+
+    "use strict";
+
     global.Appacitive.Object = function(attrs, options) {
         attrs = attrs || {};
         options = options || {};
@@ -4855,6 +5135,10 @@ var extend = function(protoProps, staticProps) {
         };
 
         this.typeName = attrs.__type;
+
+        this._aclFactory = new Appacitive._Acl(options.__acls, options.setSnapShot);
+
+        this.acls = this._aclFactory.acls;
 
         if (_type.isFunction(this.initialize)) {
             this.initialize.apply(this, [attrs]);
@@ -5365,15 +5649,17 @@ var extend = function(protoProps, staticProps) {
 
     "use strict";
 
-    var UserManager = function() {
+    
+        var User = function(options, setSnapshot) {
+            options = options || {};
+            options.__type = 'user';
+            global.Appacitive.Object.call(this, options, setSnapshot);
+            return this;
+        };
 
         var _authenticatedUser = null;
 
-        this.current = function() {
-            return _authenticatedUser;
-        };
-
-        this.currentUser = this.current;
+        User.currentUser = User.current = function() { return _authenticatedUser; };
 
         var _updatePassword = function(oldPassword, newPassword, callbacks) {
             var userId = this.get('__id');
@@ -5429,7 +5715,7 @@ var extend = function(protoProps, staticProps) {
             return request.send();
         };
 
-        this.setCurrentUser = function(user, token, expiry) {
+        User.setCurrentUser = function(user, token, expiry) {
             if (!user) throw new Error('Cannot set null object as user');
             var userObject = user;
             
@@ -5459,12 +5745,6 @@ var extend = function(protoProps, staticProps) {
             return _authenticatedUser;
         };
         
-        var User = function(options, setSnapshot) {
-            options = options || {};
-            options.__type = 'user';
-            global.Appacitive.Object.call(this, options, setSnapshot);
-            return this;
-        };
 
         //getter to get linkedaccounts
         User.prototype.linkedAccounts = function() {
@@ -5620,12 +5900,12 @@ var extend = function(protoProps, staticProps) {
         delete global.Appacitive.User._parseResult;
         delete global.Appacitive.User.multiDelete;
 
-        this.deleteUser = function(userId, callbacks) {
+        User.deleteUser = function(userId, callbacks) {
             if (!userId) throw new Error('Specify userid for user delete');
             return new global.Appacitive.Object({ __type: 'user', __id: userId }).del(true, callbacks);
         };
 
-        this.deleteCurrentUser = function(callbacks) {
+        User.deleteCurrentUser = function(callbacks) {
             
             var promise = global.Appacitive.Promise.buildPromise(callbacks);
 
@@ -5645,13 +5925,13 @@ var extend = function(protoProps, staticProps) {
                 _authenticatedUser = null;
                 _callback();
             }, function() { 
-                promise.reject(arguments);
+                promise.reject.apply(promise, arguments);
             });
 
             return promise;
         };
 
-        this.createNewUser = function(user, callbacks) {
+        User.createNewUser = function(user, callbacks) {
             user = user || {};
             user.__type = 'user';
             if (!user.username || !user.password || !user.firstname || user.username.length === 0 || user.password.length === 0 || user.firstname.length === 0) 
@@ -5660,10 +5940,10 @@ var extend = function(protoProps, staticProps) {
             return new global.Appacitive.User(user).save(callbacks);
         };
 
-        this.createUser = this.createNewUser;
+        User.createUser = User.createNewUser;
 
         //method to allow user to signup and then login 
-        this.signup = function(user, callbacks) {
+        User.signup = function(user, callbacks) {
             var that = this;
             var promise = global.Appacitive.Promise.buildPromise(callbacks);
 
@@ -5674,14 +5954,14 @@ var extend = function(protoProps, staticProps) {
                     promise.reject.apply(promise, arguments);
                 });
             }, function() {
-                promise.reject(arguments);
+                promise.reject.apply(promise, arguments);
             });
 
             return promise;
         };
 
         //authenticate user with authrequest that contains username , password and expiry
-        this.authenticateUser = function(authRequest, callbacks, provider) {
+        User.authenticateUser = function(authRequest, callbacks, provider) {
 
             if (!authRequest.expiry) authRequest.expiry = 86400000;
             var that = this;
@@ -5696,6 +5976,7 @@ var extend = function(protoProps, staticProps) {
                     if (data && data.user) {
                         if (provider) data.user.__authType = provider;
                         that.setCurrentUser(data.user, data.token, authRequest.expiry);
+                        global.Appacitive.User.trigger('login', _authenticatedUser, _authenticatedUser, data.token);
                         request.promise.fulfill({ user : _authenticatedUser, token: data.token });
                     } else {
                         request.promise.reject(data.status);
@@ -5706,7 +5987,7 @@ var extend = function(protoProps, staticProps) {
         };
 
         //An overrride for user login with username and password directly
-        this.login = function(username, password, callbacks) {
+        User.login = function(username, password, callbacks) {
 
             if (!username || !password || username.length ==0 || password.length == 0) throw new Error('Please specify username and password');
 
@@ -5719,7 +6000,7 @@ var extend = function(protoProps, staticProps) {
             return this.authenticateUser(authRequest, callbacks, 'BASIC');
         };
 
-        this.loginWithFacebook = function(accessToken, callbacks) {
+        User.loginWithFacebook = function(accessToken, callbacks) {
             
             if (!accessToken || !_type.isString(accessToken)) throw new Error("Please provide accessToken");
 
@@ -5733,7 +6014,7 @@ var extend = function(protoProps, staticProps) {
             return this.authenticateUser(authRequest, callbacks, 'FB');
         };
 
-        this.loginWithTwitter = function(twitterObj, callbacks) {
+        User.loginWithTwitter = function(twitterObj, callbacks) {
             
             if (!_type.isObject(twitterObj) || !twitterObj.oAuthToken  || !twitterObj.oAuthTokenSecret) throw new Error("Twitter Token and Token Secret required for linking");
             
@@ -5753,7 +6034,7 @@ var extend = function(protoProps, staticProps) {
             return this.authenticateUser(authRequest, callbacks, 'TWITTER');
         };
 
-        this.validateCurrentUser = function(avoidApiCall, callback) {
+        User.validateCurrentUser = function(avoidApiCall, callback) {
 
             var promise = global.Appacitive.Promise.buildPromise({ success: callback });
 
@@ -5803,23 +6084,23 @@ var extend = function(protoProps, staticProps) {
             return request.send();
         };
 
-        this.getUserByToken = function(token, callbacks) {
+        User.getUserByToken = function(token, callbacks) {
             if (!token || !_type.isString(token) || token.length === 0) throw new Error("Please specify valid token");
             global.Appacitive.Session.setUserAuthHeader(token, 0, true);
             return _getUserByIdType("getUserByTokenUrl", [token], callbacks);
         };
 
-        this.getUserByUsername = function(username, callbacks) {
+        User.getUserByUsername = function(username, callbacks) {
             if (!username || !_type.isString(username) || username.length === 0) throw new Error("Please specify valid username");
             return _getUserByIdType("getUserByUsernameUrl", [username], callbacks);
         };
 
-        this.logout = function(makeApiCall) {
+        User.logout = function(makeApiCall) {
             _authenticatedUser = null;
             return global.Appacitive.Session.removeUserAuthHeader(makeApiCall);
         };
 
-        this.sendResetPasswordEmail = function(username, subject, callbacks) {
+        User.sendResetPasswordEmail = function(username, subject, callbacks) {
 
             if (!username || !_type.isString(username)  || username.length === 0) throw new Error("Please specify valid username");
             if (!subject || !_type.isString(subject) || subject.length === 0) throw new Error('Plase specify subject for email');
@@ -5839,7 +6120,7 @@ var extend = function(protoProps, staticProps) {
             return request.send();
         };
 
-        this.resetPassword = function(token, newPassword, callbacks) {
+        User.resetPassword = function(token, newPassword, callbacks) {
 
             if (!token) throw new Error("Please specify token");
             if (!newPassword || newPassword.length === 0) throw new Error("Please specify password");
@@ -5858,7 +6139,7 @@ var extend = function(protoProps, staticProps) {
             return request.send();
         };
 
-        this.validateResetPasswordToken = function(token, callbacks) {
+        User.validateResetPasswordToken = function(token, callbacks) {
             
             if (!token) throw new Error("Please specify token");
 
@@ -5875,9 +6156,10 @@ var extend = function(protoProps, staticProps) {
             });
             return request.send();
         };
-    };
 
-    global.Appacitive.Users = new UserManager();
+    global.Appacitive.Users = global.Appacitive.User;
+
+    global.Appacitive.Events.mixin(global.Appacitive.User);
 
 })(global);
   (function(global) {
@@ -5914,7 +6196,7 @@ var extend = function(protoProps, staticProps) {
      * models' attributes.
      */
     toJSON: function(options) {
-      return this.model.map(function(model) { return model.toJSON(options); });
+      return this.models.map(function(model) { return model.toJSON(options); });
     },
 
     add: function(models, options) {
@@ -6035,10 +6317,13 @@ var extend = function(protoProps, staticProps) {
     },
 
     query: function(query) {
-      if ((query instanceof global.Appacitive.Query) 
-        || (query instanceof global.Appacitive.Queries.GraphProjectQuery)) { 
-        this._query = query;
-        return this;
+      if (query) {
+        if ((query instanceof global.Appacitive.Query) || (query instanceof global.Appacitive.Queries.GraphProjectQuery)) { 
+          this._query = query;
+          return this;
+        } else {
+          throw new Error("Cannot bind this query")
+        }
       }
       else return this._query;
     },

@@ -36,6 +36,8 @@ var app = app || {};
 
     // Render login section by default 
     render: function() {
+      $('#help-info').hide();
+
       this.$el.html(this.loginTemplate);
       //this.delegateEvents();
     },
@@ -66,7 +68,7 @@ var app = app || {};
 
     // Shows error div depending on type (signup/login)
     showError: function(type, message) {
-      this.hideSuccess();
+      this.hideMessages(type);
       this.$("." + type + "-form .error").html(message).show();
       return false;
     },
@@ -80,7 +82,7 @@ var app = app || {};
     },
 
     showSuccess: function(message) {
-      this.hideMessages();
+      this.hideMessages('login');
       this.$(".login-form .success").html(message).show();
       return false;
     },
@@ -91,7 +93,7 @@ var app = app || {};
     },
 
     showInfo: function(message) {
-      this.hideMessages();
+      this.hideMessages('login');
       this.$(".login-form .info").html(message).show();
       return false;
     },

@@ -502,7 +502,7 @@ label[for='toggle-all'] {
     margin-bottom: 5px;
 }
 
-#todoapp .main .login-form #forgot { display: block; font-size: 13px; color: rgb(70, 69, 69);}
+#todoapp .main .login-form #forgot { display: block; font-size: 13px; color: rgb(70, 69, 69); width: 110px;}
 
 #todoapp .main #header-info { text-align: center ; top: 0px; width: 100%;}
 

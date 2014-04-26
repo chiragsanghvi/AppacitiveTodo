@@ -176,7 +176,7 @@ var app = app || {};
     forgotPassword: function() {
       this.hideMessages('login');
       var username = prompt("Enter you username");
-      if (username.trim().length == 0) return this.showError('login', 'Invalid username');
+      if (!username || username.trim().length == 0) return this.showError('login', 'Invalid username');
       
       var self = this;
       this.$(".login-form button").attr("disabled", "disabled");

@@ -23,7 +23,7 @@ var app = app || {};
 
 		// Toggle the `completed` state of this todo item.
 		toggle: function () {
-			this.set('completed', !this.tryGet('completed', false, 'boolean'));
+			this.set('completed', !this.get('completed', 'boolean'));
 			this.save();
 		},
 
@@ -40,7 +40,7 @@ var app = app || {};
 	// Owner connection model
 	// ----------
 
-	// Our basic **owner** relation model, which will connects logged-in user
+	// Our basic **owner** relation model, which connects logged-in user
 	// to todo model
 	app.Owner = Appacitive.Connection.extend("owner", {
 		constructor: function(todo) {

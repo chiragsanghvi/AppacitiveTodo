@@ -65,13 +65,14 @@ var app = app || {};
     },
 
     // Shows error div depending on type (signup/login)
+    // Hides success div
     showError: function(type, message) {
       this.hideSuccess();
       this.$("." + type + "-form .error").html(message).show();
       return false;
     },
 
-    // Hides error and success div depending on type (signup/login)
+    // Hides error, success and info div depending on type (signup/login)
     hideMessages: function(type) {
       this.hideSuccess();
       this.hideInfo();
@@ -79,23 +80,29 @@ var app = app || {};
       return false;
     },
 
+    // Shows success div depending on type (signup/login)
+    // Hides other div's
     showSuccess: function(message) {
       this.hideMessages();
       this.$(".login-form .success").html(message).show();
       return false;
     },
 
+    // Hides success div
     hideSuccess: function() {
       this.$(".login-form .success").html("").hide();
       return false;
     },
 
+    // Shows info div 
+    // Hides other div's
     showInfo: function(message) {
       this.hideMessages();
       this.$(".login-form .info").html(message).show();
       return false;
     },
 
+    // Hides info 
     hideInfo: function() {
       this.$(".login-form .info").html("").hide();
       return false;
@@ -173,6 +180,9 @@ var app = app || {};
       return false;
     },
 
+    // If you click on forgot password, this function is invoked
+    // It prompts for username and sends a reset password mail to the intended user
+    // On Error shows the error
     forgotPassword: function() {
       this.hideMessages('login');
       var username = prompt("Enter you username");
@@ -183,7 +193,11 @@ var app = app || {};
 
       this.showInfo("Sending reset password mail. Please wait..!");
 
-      Appacitive.Users.sendResetPasswordEmail(username, 'Reset your Appacitive ToDo App password').then(function() {
+      // sendResetPasswordEmail method accepts 2 arguments
+      // One is the username and other is subject
+      // Both are mandatory
+      // Sends a reset password mail to the intended user
+      Appacitive.User.sendResetPasswordEmail(username, 'Reset your Appacitive ToDo App password').then(function() {
           self.showSuccess("Reset password mail sent.");
           self.$(".login-form button").removeAttr("disabled");
       }, function(status) {

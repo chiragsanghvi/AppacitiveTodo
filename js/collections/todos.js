@@ -39,7 +39,7 @@ var app = app || {};
 			return todo.get('order', 'integer');
 		},
 
-		connectAndCreate: function(todo) {
+		create: function(todo) {
 			var todo = new app.Todo(todo);
 			var owner = new app.Owner(todo).save();
 			this.add(todo, { sort: true });

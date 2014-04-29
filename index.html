@@ -26,28 +26,32 @@
 	    <script type="text/template" id="login-template">
 	      <header id="header"></header>
 	      <div class="login">
+	      	
+	      	<!--Login form-->
 	        <form class="login-form">
 	          <div id="header-info">Login</div>
-	          <div class="error" style="display:none"></div>
 	          <div class="success" style="display:none"></div>
 	          <div class="info" style="display:none"></div>
 	          <input type="text" id="login-username" placeholder="Username *" />
 	          <input type="password" id="login-password" placeholder="Password *" />
+	          <div class="error" style="display:none"></div>
 	          <button id="login">Log In</button>
 	          <button id="signup">Sign Up</button>
-	          <a href="javascript:void(0);" id="forgot">Forgot Password ?</a>
+	          <a href="javascript:void(0);" id="forgot" style="width:150px;">Forgot Password ?</a>
 	        </form>
 
+	        <!--Signup form-->
 	        <form class="signup-form hidden">
 	          <div id="header-info">Signup</div>
-	          <div class="error" style="display:none"></div>
 	          <input type="text" id="signup-username" placeholder="Enter Username *" />
 	          <input type="password" id="signup-password" placeholder="Enter Password *" />
 			  <input type="text" id="signup-firstname" placeholder="Enter name *" />
 	          <input type="email" id="signup-email" placeholder="Enter email *" />
+	          <div class="error" style="display:none"></div>
 	          <button id="signup">Sign Up</button>
 	          <button id="cancel">Cancel</button>
 	        </form>
+
 	      </div>
 	    </script>
 		

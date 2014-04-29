@@ -38,7 +38,7 @@ var app = app || {};
 		// Re-render the titles of the todo item.
 		render: function () {
 			this.$el.html(this.template(this.model.getParsed()));
-			this.$el.toggleClass('completed', this.model.tryGet('completed', false, 'boolean'));
+			this.$el.toggleClass('completed', this.model.get('completed','boolean'));
 			this.toggleVisible();
 			this.$input = this.$('.edit');
 			return this;
@@ -50,7 +50,7 @@ var app = app || {};
 		},
 
 		isHidden: function () {
-			var isCompleted = this.model.tryGet('completed', false, 'boolean');
+			var isCompleted = this.model.get('completed', 'boolean');
 			return (// hidden cases only
 				(!isCompleted && app.TodoFilter === 'completed') ||
 				(isCompleted && app.TodoFilter === 'active')
@@ -109,7 +109,7 @@ var app = app || {};
 
 		// Remove the item, destroy the model from Appacitive and delete its view.
 		clear: function () {
-			this.model.destroyWithConnections();
+			this.model.destroy(true);
 		}
 	});
 })(jQuery);

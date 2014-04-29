@@ -100,7 +100,7 @@ var app = app || {};
 			else this.allCheckbox.title = "Mark all as incomplete";
 		},
 
-		// Logs out the user from Appacitvie and shows the login view
+		// Logs out the user from Appacitive and shows the login view
 	    logOut: function(e) {
 	      Appacitive.Users.logout(true);
 	      new app.LogInView();
@@ -142,7 +142,7 @@ var app = app || {};
 		// and persist it on Appacitive server
 		createOnEnter: function (e) {
 			if (e.which === ENTER_KEY && this.$input.val().trim().length > 0) {
-				app.todos.connectAndCreate(this.newAttributes());
+				app.todos.create(this.newAttributes());
 				this.$input.val('');
 			}
 		},

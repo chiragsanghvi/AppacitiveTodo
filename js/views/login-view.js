@@ -211,14 +211,6 @@ var app = app || {};
       // One is the username and other is subject
       // Both are mandatory
       // Sends a reset password mail to the intended user
-      Appacitive.User.sendResetPasswordEmail(username, 'Reset your Appacitive ToDo App password').then(function() {
-          self.showSuccess("Reset password mail sent.");
-          self.$(".login-form button").removeAttr("disabled");
-      }, function(status) {
-          self.showError('login', status.message);
-          self.$(".login-form button").removeAttr("disabled");
-      })
-
 
       /*==========Mocked Section starts============*/
       return false;

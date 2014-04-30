@@ -22,7 +22,9 @@ var app = app || {};
 		// Depending on whether the user is logged-in or not.
 		// Check this ysing mockedUser value in localStorage
 		render: function() {
-			app.user = app.todos.localStorage['user'] ? new app.User(app.todos.localStorage['user']) : null;
+			
+			// ========= Replace this line and replace it with `app.user = Appacitive.User.current()` once you integrate with Appacitive ========
+			app.user = window.localStorage['user'] ? new app.User(window.localStorage['user']) : null;
 
 			if (app.user) {
 				new app.TodosView();

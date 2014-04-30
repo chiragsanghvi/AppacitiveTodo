@@ -181,7 +181,6 @@ var app = app || {};
 
       new app.TodosView();
       self.undelegateEvents();
-  
 
       /*==========Mocked Section ends============*/
 
@@ -203,7 +202,6 @@ var app = app || {};
       this.$(".login-form button").attr("disabled", "disabled");
 
       this.showInfo("Sending reset password mail. Please wait..!");
-
 
       /*==========Mocked Section starts============*/
 

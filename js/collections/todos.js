@@ -14,7 +14,7 @@ var app = app || {};
 		// Reference to this collection's model.
 		model: app.Todo,
 
-		// Save all of the todo items under the `"todos"` namespace.
+		// =======Remove this once you start integrating with appacitive===========
 		localStorage: new Backbone.LocalStorage('todos-backbone'),
 
 		// Filter down the list of all todo items that are finished.
@@ -42,6 +42,10 @@ var app = app || {};
 		comparator: function (todo) {
 			return todo.get('order', 'integer');
 		}
+
+		//
+		// =========Add create function here===============
+		//
 	});
 
 	// Create our global collection of **Todos**.

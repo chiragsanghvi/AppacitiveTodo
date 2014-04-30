@@ -37,6 +37,11 @@ var app = app || {};
 		}
 	});
 
+	// Owner Model
+	// =========Add owner model here===============
+	//
+
+
 	// User Model
 	// ----------
 	// Our basic **User** model has `username`, `password`,`firstname`, `lastname` and `email` attributes.

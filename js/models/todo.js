@@ -41,7 +41,6 @@ var app = app || {};
 	// ----------
 	// Our basic **User** model has `username`, `password`,`firstname`, `lastname` and `email` attributes.
 	// Remove this model once you start integration with Appacitive
-	// To use Appacitive as data store
-
+	// To use app.todos.localstorage as data store
 	app.User = Backbone.Model.extend();
 })();

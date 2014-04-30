@@ -131,13 +131,11 @@ var app = app || {};
         firstname: username
       });
 
-      app.todos.localStorage["user"] = app.user.toJSON();
+      window.localStorage["backbone-user"] = app.user.toJSON();
 
-      setTimeout(function() { 
-          new app.TodosView();
-          self.undelegateEvents();
-      }, 10);
-    
+      new app.TodosView();
+      self.undelegateEvents();
+  
       /*==========Mocked Section ends============*/
 
       this.$('.login-form #login').html("Logging In");
@@ -179,12 +177,11 @@ var app = app || {};
           lastname: lastName
       });
 
-      app.todos.localStorage["user"] = app.user.toJSON();
+      window.localStorage["backbone-user"] = app.user.toJSON();
 
-      setTimeout(function() { 
-          new app.TodosView();
-          self.undelegateEvents();
-      }, 10);
+      new app.TodosView();
+      self.undelegateEvents();
+  
 
       /*==========Mocked Section ends============*/
 

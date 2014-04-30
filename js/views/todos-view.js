@@ -55,9 +55,13 @@ var app = app || {};
 			// Suppresses 'add' events with {reset: true} and prevents the app view
 			// from being re-rendered for every model. Only renders when the 'reset'
 			// event is triggered at the end of the fetch.
-			app.todos.fetch({reset: true});
-			self.$input.removeAttr('disabled');
-
+			app.todos.fetch({
+				reset: true, 
+				success: function() {
+					self.$input.removeAttr('disabled');	
+				}
+			});
+			
 			/*==========Mocked Section ends============*/
 		},
 
@@ -140,7 +144,7 @@ var app = app || {};
 
 		// Clear all completed todo items, destroying their models.
 		clearCompleted: function () {
-			app.todos.forEach(function(todo) {
+			app.todos.completed().forEach(function(todo) {
 				todo.destroy(true);
 			});
 			return false;

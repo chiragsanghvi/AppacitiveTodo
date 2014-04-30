@@ -122,7 +122,8 @@ var app = app || {};
       if (username.trim().length == 0) return this.showError("login", "Please provide username");
       if (password.trim().length == 0) return this.showError("login", "Please provide password");
 
-      Appacitive.Users.login(username, password).then(function(user) {
+      Appacitive.Users.login(username, password).then(function(authResponse) {
+          app.user = authResponse.user;
           new app.TodosView();
           self.undelegateEvents();
       }, function(error) {
@@ -165,7 +166,8 @@ var app = app || {};
           firstname: firstName,
           email: email,
           lastname: lastName
-      }).then(function(user) {
+      }).then(function(authResponse) {
+          app.user = authResponse.user;
           new app.TodosView();
           self.undelegateEvents();
       }, function(error) {

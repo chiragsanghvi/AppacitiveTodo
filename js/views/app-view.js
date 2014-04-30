@@ -19,7 +19,8 @@ var app = app || {};
 		},
 
 		render: function() {
-			if (Appacitive.Users.current()) {
+			app.user = Appacitive.Users.current();
+			if (app.user) {
 				new app.TodosView();
 			} else {
 				new app.LogInView();

@@ -22,7 +22,7 @@ var app = app || {};
 		// Depending on whether the user is logged-in or not.
 		// Check this ysing mockedUser value in localStorage
 		render: function() {
-			app.user = (typeof Appacitive != 'undefined') ? Appacitive.User.currrent() : (window.localStorage['backbone-user'] ? new app.User(window.localStorage['backbone-user']) : null);
+			app.user = app.todos.localStorage['user'] ? new app.User(app.todos.localStorage['user']) : null;
 
 			if (app.user) {
 				new app.TodosView();

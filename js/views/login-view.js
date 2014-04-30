@@ -1,4 +1,4 @@
-/*global Backbone, jQuery, _, Appacitive*/
+/*global Backbone, jQuery, _, , Appacitive/Backbone.LocalStorage */
 var app = app || {};
 
 (function ($) {
@@ -122,14 +122,23 @@ var app = app || {};
       if (username.trim().length == 0) return this.showError("login", "Please provide username");
       if (password.trim().length == 0) return this.showError("login", "Please provide password");
 
-      Appacitive.Users.login(username, password).then(function(user) {
+
+      /*==========Mocked Section starts============*/
+
+      app.user = new app.User({
+        username: username,
+        password: password,
+        firstname: username
+      });
+
+      app.todos.localStorage["user"] = app.user.toJSON();
+
+      setTimeout(function() { 
           new app.TodosView();
           self.undelegateEvents();
-      }, function(error) {
-          self.showError("login", "Invalid username or password. Please try again.");
-          self.$(".login-form button").removeAttr("disabled");
-          self.$('.login-form #login').html("LogIn");
-      });
+      }, 10);
+    
+      /*==========Mocked Section ends============*/
 
       this.$('.login-form #login').html("Logging In");
       this.$(".login-form button").attr("disabled", "disabled");
@@ -159,20 +168,25 @@ var app = app || {};
       var split = firstName.split(' ');
       if (split.length > 1) firstName = split[0], lastName  = split[1];
 
-      Appacitive.Users.signup({
-          username: username.toLowerCase(),
+
+      /*==========Mocked Section starts============*/
+
+      app.user = new app.User({
+          username: username,
           password: password,
           firstname: firstName,
           email: email,
           lastname: lastName
-      }).then(function(user) {
+      });
+
+      app.todos.localStorage["user"] = app.user.toJSON();
+
+      setTimeout(function() { 
           new app.TodosView();
           self.undelegateEvents();
-      }, function(error) {
-          self.showError('signup', error.message);
-          self.$(".signup-form button").removeAttr("disabled");
-          self.$('.signup-form #login').html("Sign Up");
-      });
+      }, 10);
+
+      /*==========Mocked Section ends============*/
 
       this.$(".signup-form button").attr("disabled", "disabled");
       this.$('.signup-form #login').html("Signing Up");
@@ -193,6 +207,9 @@ var app = app || {};
 
       this.showInfo("Sending reset password mail. Please wait..!");
 
+
+      /*==========Mocked Section starts============*/
+
       // sendResetPasswordEmail method accepts 2 arguments
       // One is the username and other is subject
       // Both are mandatory
@@ -204,6 +221,9 @@ var app = app || {};
           self.showError('login', status.message);
           self.$(".login-form button").removeAttr("disabled");
       })
+
+
+      /*==========Mocked Section starts============*/
       return false;
     }
   });

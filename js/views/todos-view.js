@@ -1,4 +1,4 @@
-/*global Backbone, jQuery, _, ENTER_KEY, Appacitive */
+/*global Backbone, jQuery, _, ENTER_KEY, Appacitive/Backbone.LocalStorage  */
 var app = app || {};
 
 (function ($) {
@@ -10,7 +10,7 @@ var app = app || {};
 	// Our overall **TodosView** is the top-level piece of UI.
 	app.TodosView = Backbone.View.extend({
 
-		// Instead of generating a new element, bind to the existing skeleton of
+		// Instead of generating a new element, bind to the existing skeleton Aof
 		// the App already present in the HTML.
 		el: '.main',
 
@@ -36,8 +36,6 @@ var app = app || {};
 
 			$('#help-info').show();
 
-			app.todos.query().fields(["title", "completed", "order"]);
-
 			this.allCheckbox = this.$('#toggle-all')[0];
 			this.$input = this.$('#new-todo');
 			this.$footer = this.$('#footer');
@@ -52,22 +50,15 @@ var app = app || {};
 
 			var self = this;
 
-			// Set query type for app.todos
-			// Query will be getConnectedObjects in respect to current user for relation owner
-			// This'll allow us to fetch todo objects connected to user by owner relation
-			var query = Appacitive.Users.current().getConnectedObjects({
-				 relation : 'owner',
-				 pageSize: 200
-  			});
-
-  			app.todos.query(query);
+			/*==========Mocked Section starts============*/
 
 			// Suppresses 'add' events with {reset: true} and prevents the app view
 			// from being re-rendered for every model. Only renders when the 'reset'
 			// event is triggered at the end of the fetch.
-			app.todos.fetch({ reset: true, sort: true }).then(function() {
-				self.$input.removeAttr('disabled');
-			});
+			app.todos.fetch({reset: true});
+			self.$input.removeAttr('disabled');
+
+			/*==========Mocked Section ends============*/
 		},
 
 		// Re-rendering the App just means refreshing the statistics -- the rest
@@ -102,10 +93,10 @@ var app = app || {};
 
 		// Logs out the user from Appacitive and shows the login view
 	    logOut: function(e) {
-	      Appacitive.Users.logout(true);
-	      new app.LogInView();
-	      this.undelegateEvents();
-	      delete this;
+	    	delete window.localStorage['todos-backbone-login'];
+			new app.LogInView();
+			this.undelegateEvents();
+			delete this;
 	    },
 
 		// Add a single todo item to the list by creating a view for it, and
@@ -149,7 +140,9 @@ var app = app || {};
 
 		// Clear all completed todo items, destroying their models.
 		clearCompleted: function () {
-			_.invoke(app.todos.completed(), 'destroyWithConnections');
+			app.todos.forEach(function(todo) {
+				todo.destroy(true);
+			});
 			return false;
 		},
 

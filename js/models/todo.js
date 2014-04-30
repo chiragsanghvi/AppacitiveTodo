@@ -1,4 +1,4 @@
-/*global Backbone, , Appacitive */
+/*global Backbone, Appacitive/Backbone.LocalStorage */
 var app = app || {};
 
 (function () {
@@ -8,12 +8,13 @@ var app = app || {};
 	// ----------
 
 	// Our basic **Todo** model has `title`, `order`, and `completed` attributes.
-	app.Todo = Appacitive.Object.extend("todo", {
+	/* Replace Backbone.Model.extend() call  with 
+	   Appacitive.Object.extend('todo', {
+		    //.....
+	   }); */
+	// To use Appacitive as data store
+	app.Todo = Backbone.Model.extend({
 		
-		initialize: function() {
-			this.fields(["completed", "title", "order"])
-		},
-
 		// Default attributes for the todo
 		// and ensure that each todo created has `title` and `completed` keys.
 		defaults: {
@@ -28,7 +29,6 @@ var app = app || {};
 		},
 
 		// To cast toJSON response
-		// Cast completed into boolean and order into integer type
 		getParsed: function() {
 			var attrs = this.toJSON();
 			attrs.completed = this.get('completed', 'boolean');
@@ -37,28 +37,11 @@ var app = app || {};
 		}
 	});
 
-	// Owner connection model
+	// User Model
 	// ----------
+	// Our basic **User** model has `username`, `password`,`firstname`, `lastname` and `email` attributes.
+	// Remove this model once you start integration with Appacitive
+	// To use Appacitive as data store
 
-	// Our basic **owner** relation model, which connects logged-in user
-	// to todo model
-	app.Owner = Appacitive.Connection.extend("owner", {
-		constructor: function(todo) {
-			// To avoid other parsing conflicts
-			if (todo instanceof app.Todo) {
-				var attrs = {
-					endpoints: [{
-						label: 'user',
-						object: Appacitive.Users.current()
-					}, {
-						label: 'todo',
-						object: todo
-					}]
-				};
-			}
-			//Invoke internal constructor
-    		Appacitive.Connection.call(this, attrs); 
-	    	
-		}
-	});
+	app.User = Backbone.Model.extend();
 })();

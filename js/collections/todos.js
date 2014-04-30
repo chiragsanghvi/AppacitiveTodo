@@ -1,4 +1,4 @@
-/*global Backbone , Appacitive*/
+/*global Backbone, Appacitive/Backbone.LocalStorage*/
 var app = app || {};
 
 (function () {
@@ -7,23 +7,27 @@ var app = app || {};
 	// Todo Collection
 	// ---------------
 
-	// The collection of todos is backed by *localStorage* instead of a remote
-	// server.
-	var Todos = Appacitive.Collection.extend({
+	// The collection of todos is backed by *localStorage* instead of a remote server.
+	// Replace Backbone.Collection with Appacitive.Collection to use Appacitive as data store
+	var Todos = Backbone.Collection.extend({
+		
 		// Reference to this collection's model.
 		model: app.Todo,
+
+		// Save all of the todo items under the `"todos"` namespace.
+		localStorage: new Backbone.LocalStorage('todos-backbone'),
 
 		// Filter down the list of all todo items that are finished.
 		completed: function () {
 			return this.filter(function (todo) {
-				return todo.tryGet('completed', false, 'boolean');
+				return todo.get('completed', 'boolean');
 			});
 		},
 
 		// Filter down the list to only todo items that are still not finished.
 		remaining: function () {
 			return this.filter(function (todo) {
-				return !(todo.tryGet('completed', false, 'boolean'));
+				return !(todo.get('completed', 'boolean'));
 			});
 		},
 
@@ -37,12 +41,6 @@ var app = app || {};
 		// Todos are sorted by their original insertion order.
 		comparator: function (todo) {
 			return todo.get('order', 'integer');
-		},
-
-		create: function(todo) {
-			var todo = new app.Todo(todo);
-			var owner = new app.Owner(todo).save();
-			this.add(todo, { sort: true });
 		}
 	});
 

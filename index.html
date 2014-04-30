@@ -7,7 +7,16 @@
 		<link rel="stylesheet" href="css/todos.css">
 		<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 		<script src="js/infra/underscore.js"></script>
-		<script src="http://cdn.appacitive.com/sdk/js/appacitive-js-sdk-v0.9.6.1.min.js"></script>
+		<script src="js/infra/backbone.js"></script>
+		
+		<!-- SELECT ONE (AND ONLY ONE) OF THE DATA PERSISTENCE SOLUTIONS BELOW -->
+		
+		<!-- Uncomment the script below to access the application data using the backbone localstorage as data store -->
+		<script src="js/infra/backbone.localstorage.js"></script>
+
+		<!-- Uncomment the script below to use Appacitive.com as the data persistence layer. -->
+		<!--<script src="http://cdn.appacitive.com/sdk/js/appacitive-js-sdk-v0.9.6.1.min.js"></script>-->
+
 	</head>
 	<body>
 		<section id="todoapp">
@@ -64,7 +73,7 @@
 				<section id="main">
 					<input id="toggle-all" type="checkbox">
 					<div id="user-info">
-		        		Welcome back <%= Appacitive.Users.current().get("firstname") %> <%= Appacitive.Users.current().get("lastname") %> ( <a href="javascript:void(0);" class="log-out">Log out</a> )
+		        		Welcome back <%= app.user.get("firstname") %> <%= app.user.get("lastname") %> ( <a href="javascript:void(0);" class="log-out">Log out</a> )
 		      		</div>
 					<ul id="todo-list">
 						<li >
@@ -105,7 +114,6 @@
 			<% } %>
 		</script>
 
-		<script src="js/infra/backbone.js"></script>
 		<script src="js/models/todo.js"></script>
 		<script src="js/collections/todos.js"></script>
 		<script src="js/views/todo-view.js"></script>

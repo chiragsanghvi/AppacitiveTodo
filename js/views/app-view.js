@@ -1,4 +1,4 @@
-/*global Backbone, jQuery, _, ENTER_KEY */
+/*global Backbone, jQuery, _, ENTER_KEY , Appacitive/Backbone.LocalStorage  */
 var app = app || {};
 
 (function ($) {
@@ -18,8 +18,13 @@ var app = app || {};
 		  this.render();
 		},
 
+		// Renders either of the 2 views viz. LoginView or TodosView
+		// Depending on whether the user is logged-in or not.
+		// Check this ysing mockedUser value in localStorage
 		render: function() {
-			if (Appacitive.Users.current()) {
+			app.user = (typeof Appacitive != 'undefined') ? Appacitive.User.currrent() : (app.todos.localStorage['user'] ? new app.User(app.todos.localStorage['user']) : null);
+
+			if (app.user) {
 				new app.TodosView();
 			} else {
 				new app.LogInView();

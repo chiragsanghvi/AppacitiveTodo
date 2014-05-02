@@ -7,8 +7,7 @@ var app = app || {};
 	// Todo Collection
 	// ---------------
 
-	// The collection of todos is backed by *localStorage* instead of a remote
-	// server.
+	// The collection of todos is backed by *Appacitive* 
 	var Todos = Appacitive.Collection.extend({
 		// Reference to this collection's model.
 		model: app.Todo,

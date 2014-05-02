@@ -50,23 +50,24 @@ var app = app || {};
 		// Override internal constructor to add endpoints for connection
 		// If `todo`, an instance of app.Todo is passed then only we change the attributes to add endpoints
 		// Finally we call the internal constructor
-		constructor: function(todo) {
+		constructor: function() {
 			
-			// To avoid other parsing conflicts with connectedObjects call
-			if (todo instanceof app.Todo) {
-				var attrs = {
+			var args = Array.prototype.slice.call(arguments);
+
+			// To avoid other parsing conflicts with connectedObjects
+			if (args[0] instanceof app.Todo) {
+				arguments[0] = {
 					endpoints: [{
 						label: 'user',
 						object: Appacitive.Users.current()
 					}, {
 						label: 'todo',
-						object: todo
+						object: args[0]
 					}]
 				};
 			}
-			
 			//Invoke internal constructor
-    		Appacitive.Connection.apply(this, arguments); 	
+    		Appacitive.Connection.apply(this, arguments);
 		}
 	});
 })();

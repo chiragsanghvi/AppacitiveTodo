@@ -8,8 +8,11 @@ var app = app || {};
 	// ----------
 
 	// Our basic **Todo** model has `title`, `order`, and `completed` attributes.
-	app.Todo = Appacitive.Object.extend("todo", {
+	app.Todo = Appacitive.Object.extend({
 		
+		//type name to which this object binds on Appacitive
+    	typeName: "todo",
+
 		// Function called after object is created
 		// Set fields property for this object
 		// Ro return specific attributes on fetch call
@@ -45,8 +48,11 @@ var app = app || {};
 
 	// Our basic **owner** relation model, which connects logged-in user
 	// to todo model
-	app.Owner = Appacitive.Connection.extend("owner", {
+	app.Owner = Appacitive.Connection.extend({
 		
+		//relation name to which this connection binds on Appacitive
+    	relationName: "owner",
+
 		// Override internal constructor to add endpoints for connection
 		// If `todo`, an instance of app.Todo is passed then only we change the attributes to add endpoints
 		// Finally we call the internal constructor

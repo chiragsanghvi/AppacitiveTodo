@@ -5,7 +5,7 @@ var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
 Appacitive.initialize({
-	apikey: 'MDQ2NWZlNjVhZjgxNjc5MDMxZTNkMmQ0ZmQxNDI4MjMxYjY3OWE3MDdjMmZiMmNhZGRkY2UyMjc0ZWZlNjUwNA==', 
+	apikey: 'sjzGiu1HcfuzvZAFNWQNsrizoflOUhA2qHxycfQ4Pd0=', 
     env: 'sandbox', 
     appId: '56564813671825740'
 });

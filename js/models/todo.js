@@ -24,17 +24,10 @@ var app = app || {};
 
 		// Toggle the `completed` state of this todo item.
 		toggle: function () {
-			this.set('completed', !this.get('completed', 'boolean'));
+			this.set('completed', !this.get('completed'));
 			this.save();
-		},
-
-		// To cast toJSON response
-		getParsed: function() {
-			var attrs = this.toJSON();
-			attrs.completed = this.get('completed', 'boolean');
-			attrs.order = this.get('order', 'integer');
-			return attrs;
 		}
+		
 	});
 
 	// Owner Model

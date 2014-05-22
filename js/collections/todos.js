@@ -20,14 +20,14 @@ var app = app || {};
 		// Filter down the list of all todo items that are finished.
 		completed: function () {
 			return this.filter(function (todo) {
-				return todo.get('completed', 'boolean');
+				return todo.get('completed');
 			});
 		},
 
 		// Filter down the list to only todo items that are still not finished.
 		remaining: function () {
 			return this.filter(function (todo) {
-				return !(todo.get('completed', 'boolean'));
+				return !(todo.get('completed'));
 			});
 		},
 
@@ -35,12 +35,12 @@ var app = app || {};
 		// GUID in the database. This generates the next order number for new items.
 		nextOrder: function () {
 			if (!this.length) return 1;
-			return this.last().get('order', 'integer') + 1;
+			return this.last().get('order') + 1;
 		},
 
 		// Todos are sorted by their original insertion order.
 		comparator: function (todo) {
-			return todo.get('order', 'integer');
+			return todo.get('order');
 		}
 
 		//

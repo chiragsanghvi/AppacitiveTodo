@@ -1,0 +1,363 @@
+<style type='text/css'>
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.4em;
+    background: #eaeaea url('images/bg.png');
+    color: #4d4d4d;
+    width: 550px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -ms-font-smoothing: antialiased;
+    -o-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    margin: auto !important;
+  }
+  
+  .main-body {
+    font-size: 13px;
+    font-family: Tahoma, Arial;
+    line-height: 20px;
+    background-color: #fff;
+  }
+  
+  #todoapp {
+    background: rgba(255, 255, 255, 0.9);
+    margin: 130px 0 40px 0;
+    border: 1px solid #ccc;
+    position: relative;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2),                 0 25px 50px 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  #todoapp:before {
+    content: '';
+    border-left: 1px solid #f5d6d6;
+    border-right: 1px solid #f5d6d6;
+    width: 2px;
+    position: absolute;
+    top: 0;
+    left: 40px;
+    height: 100%;
+  }
+  
+  #todoapp input::-webkit-input-placeholder {
+    font-style: italic;
+  }
+  
+  #todoapp input::-moz-placeholder {
+    font-style: italic;
+    color: #a9a9a9;
+  }
+  
+  #todoapp h1 {
+    position: absolute;
+    top: -120px;
+    width: 100%;
+    font-size: 40pt;
+    font-weight: bold;
+    text-align: center;
+    color: #b3b3b3;
+    color: rgba(255, 255, 255, 0.3);
+    text-shadow: -1px -1px rgba(0, 0, 0, 0.2);
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-text-rendering: optimizeLegibility;
+    -ms-text-rendering: optimizeLegibility;
+    -o-text-rendering: optimizeLegibility;
+    text-rendering: optimizeLegibility;
+  }
+  
+  
+  #header {
+    padding-top: 25px;
+    border-radius: inherit;
+  }
+  
+  #header:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 15px;
+    z-index: 2;
+    border-bottom: 1px solid #6c615c;
+    background: #8d7d77;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(132, 110, 100, 0.8)),to(rgba(101, 84, 76, 0.8)));
+    background: -webkit-linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
+    background: linear-gradient(top, rgba(132, 110, 100, 0.8), rgba(101, 84, 76, 0.8));
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#9d8b83', EndColorStr='#847670');
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px;
+    height: 30px;
+    
+  }
+  
+  #todoapp .main #header-info {
+    padding: 5px 10px 0px;
+    border-top: 1px solid #ededed;
+    margin-bottom: 0px;
+    color: gainsboro;
+    font-weight: bolder;
+    text-align: center;
+    position: absolute;
+    top: 0px;
+    
+    border: none;
+    right: 0;
+    outline: 0;
+    z-index: 10;
+    width: 100%
+  }
+  
+  
+  #todoapp .main .reset {
+    width: 420px;
+    margin: 45px 0px 25px 75px;
+  }
+  
+  .banner {
+    background-color: #2672EC;
+    height: 42px;
+  }
+  .banner h2 {
+    margin: 0px;
+    padding: 4px 0px 6px 12px;
+    font-weight: normal;
+    color: #fff;
+    font-size: 22px;
+    line-height: 32px;
+  }
+  .main-container {
+    padding: 12px 16px;
+  }
+  .main-container h3 {
+    margin: 5px 0px 20px;
+    font-weight: normal;
+    font-size: 17px;
+  }
+  .label-container {
+    margin: 6px 0px 2px;
+  }
+  .label-container label {
+    font-size: 12px;
+  }
+  .input-container {
+    margin: 0px 0px 12px;
+  }
+  .input-container input[type="button"] {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 100%;
+    vertical-align: baseline;
+    font-family: inherit;
+    color: inherit;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+  }
+  
+  .input-container input[type="button"] {
+    padding: 5px 10px;
+    background: #eee;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-family: "Helvetica Neue";
+    cursor: pointer;
+  }
+  
+  
+  #todoapp .input-container input[type="text"], #todoapp .input-container input[type="password"] {
+    display: inline-block;
+    margin-bottom: 10px;
+    font-size: 20px;
+    padding: 5px;
+    width: 240px;
+  }
+  
+  .metropop {
+    background: #8d7d77;
+    box-shadow:2px 2px 20px rgba(179, 169, 166, 0.3);
+  }
+  
+  .metropop.right .pointer {
+    border-top:15px solid #8d7d77;
+  }
+  
+  .margin-left-large {
+    margin-left: 5px;
+  }
+  input.input-error, input.input-error:focus {
+    border: inset 2px red !important;
+  }
+  input.input-info, input.input-info:focus {
+    border: inset 2px orange !important;
+  }
+  input.input-success, input.input-success:focus {
+    border: inset 2px green !important;
+  }
+  .label-error {
+    color: red;
+  }
+  .label-success {
+    color: green;
+  }
+  .label-info {
+    color: orange;
+  }
+  .hide {
+    display: none;
+  }
+  .status {
+    display: inline-block;
+    height: 26px;
+    line-height: 20px;
+    vertical-align: top;
+    margin: 0px;
+  }
+  #lblStatus {
+    display: none;
+  }
+  
+  #divSuccess, #divError {
+    margin-top: 20px !important;
+  }
+  
+  #divSuccess h3 {
+    color: green;
+    font-weight: bold;
+  }
+  
+  #divError h3 {
+    color: red;
+    font-weight: bold;
+  }
+  
+</style>
+
+<div class='main-body' id="todoapp">
+  
+  <!--
+<div class='banner'>
+<h2>
+[#applicationName] account
+</h2>
+</div>
+-->
+  
+  <div>
+    <h1>
+      Appacitive Todo List
+    </h1>
+  </div>
+  
+  <div class="main">
+    <header id="header">
+    </header>
+    
+    <div id="header-info">
+      Reset your password
+    </div>
+    
+    <div id='divAction' class='main-container reset'>
+      
+      <p class='input-container'>
+        <input type='password' id='txtPassword' data-content='Passwords can contain any of the following: 
+<ul>
+<li>
+uppercase or lowercase letters
+</li>
+<li>
+numbers
+</li>
+<li>
+symbols
+</li>
+</ul>
+' data-offset='45' placeholder="New Password *"/>
+        <label for='txtPassword' class='label-success margin-left-large hide'>
+          Good
+        </label>
+      </p>
+      
+      <p class='input-container'>
+        <input type='password' id='txtConfirmPassword'  placeholder="Confirm Password *"/>
+        <label for='txtConfirmPassword' class='label-error margin-left-large hide'>
+          Password mismatch
+        </label>
+      </p>
+      
+      <p class='label-container status'>
+        <label id='lblStatus'>
+          Confirm password
+        </label>
+      </p>
+      
+      <p class='input-container'>
+        <input type='button' id='btnSubmit' data-loading='Resetting' value='Reset password' />
+      </p>
+    </div>
+    
+    <div id='divSuccess' class='main-container hide  reset'>
+      <h3>
+        Success
+      </h3>
+      <p class='label-container'>
+        <label>
+          You've reset your password successfully. Click 
+          <a href="http://jstodo.appacitive.com/">
+            here
+          </a>
+          to login.
+        </label>
+      </p>
+    </div>
+    
+    <div id='divError' class='main-container hide  reset'>
+      <h3>
+        The password token is invalid. 
+      </h3>
+      <p class='label-container'>
+        <label>
+          If you are trying to recover password, please start the recovery process again.
+        </label>
+        <a href="http://jstodo.appacitive.com/">
+          Login
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  /* Helper Methods */ function checkStrength(element, tElement) {
+    var password = $(element).val();
+    /* initial strength */ var strength = 0;
+    if (password.length == 0) {
+      $(element).removeClass().addClass('input-error');
+      $(tElement).addClass('hide');
+      return;
+    }
+    /* if the password length is less than 6, return message. */ if (password.length < 6) {
+      $(element).removeClass().addClass('input-error');
+      $(tElement).removeClass().addClass('label-error margin-left-large').html('short');
+      return;
+    }
+    /* if length is 8 characters or more, increase strength value */ if (password.length > 7) strength += 1;
+    /* if password contains both lower and uppercase characters, increase strength value */ if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1;
+    /* if it has numbers and characters, increase strength value */ if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength += 1;
+    /* if it has one special character, increase strength value */ if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1;
+    /* if it has two special characters, increase strength value */ if (password.match(/(.*[!,%,&,@,#,$,^,*,?,_,~].*[!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1;
+    /* now we have calculated strength value, we can return messages *//* if value is less than 2 */ if (strength < 2) { $(element).removeClass().addClass('input-error'); $(tElement).removeClass().addClass('label-error margin-left-large').html('weak'); } else if (strength == 2) { $(element).removeClass().addClass('input-info'); $(tElement).removeClass().addClass('label-info margin-left-large').html('good'); } else { $(element).removeClass().addClass('input-success'); $(tElement).removeClass().addClass('label-success margin-left-large').html('strong'); } } function checkConfPassword() { if ($('#txtConfirmPassword').val() != $('#txtPassword').val()) { $('#txtConfirmPassword').addClass('input-error'); $('label[for=txtConfirmPassword]').removeClass('hide'); } else { $('#txtConfirmPassword').removeClass('input-error'); $('label[for=txtConfirmPassword]').addClass('hide'); } } /*Bind events */ $('#txtPassword') .keyup(function (e) { checkStrength($(this), $('label[for=txtPassword]')); }) .focus(function () { $(this).metroPop({ html: true }); $(this).metroPop('show'); }) .focusout(function () { checkStrength($(this), $('label[for=txtPassword')); if ($('#txtConfirmPassword').val() != '') checkConfPassword(); }); $('#txtConfirmPassword').focusout(checkConfPassword); 
+</script>

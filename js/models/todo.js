@@ -7,7 +7,7 @@ var app = app || {};
 	// Todo Model
 	// ----------
 
-	// Our basic **Todo** model has `title`, `order`, and `completed` attributes.
+	// Our basic **Todo** model has `title`, and `completed` attributes.
 	app.Todo = Appacitive.Object.extend({
 		
 		//type name to which this object binds on Appacitive
@@ -17,7 +17,7 @@ var app = app || {};
 		// Set fields property for this object
 		// Ro return specific attributes on fetch call
 		initialize: function() {
-			this.fields(["completed", "title", "order"])
+			this.fields(["completed", "title", "__utcdatecreated"])
 		},
 
 		// Default attributes for the todo

@@ -36,8 +36,6 @@ var app = app || {};
 
 			$('#help-info').show();
 
-			app.todos.query().fields(["title", "completed", "order"]);
-
 			this.allCheckbox = this.$('#toggle-all')[0];
 			this.$input = this.$('#new-todo');
 			this.$footer = this.$('#footer');
@@ -56,8 +54,10 @@ var app = app || {};
 			// Query will be getConnectedObjects in respect to current user for relation owner
 			// This'll allow us to fetch todo objects connected to user by owner relation
 			var query = Appacitive.Users.current().getConnectedObjects({
-				 relation : 'owner',
-				 pageSize: 200
+				relation : 'owner',
+				pageSize: 200,
+				fields: ["title", "completed", "__utcdatecreated"],
+				returnEdge: false
   			});
 
   			app.todos.query(query);

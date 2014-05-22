@@ -97,7 +97,7 @@ var app = app || {};
 
 		// Logs out the user from Appacitive and shows the login view
 	    logOut: function(e) {
-	    	delete window.localStorage['todos-backbone-login'];
+	    	delete window.localStorage['backbone-user'];
 			new app.LogInView();
 			this.undelegateEvents();
 			delete this;

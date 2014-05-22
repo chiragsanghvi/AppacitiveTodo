@@ -24,7 +24,7 @@ var app = app || {};
 		render: function() {
 			
 			// ========= Replace this line and replace it with `app.user = Appacitive.User.current()` once you integrate with Appacitive ========
-			app.user = window.localStorage['user'] ? new app.User(window.localStorage['user']) : null;
+			app.user = window.localStorage['backbone-user'] ? new app.User(JSON.parse(window.localStorage['backbone-user'])) : null;
 
 			if (app.user) {
 				new app.TodosView();

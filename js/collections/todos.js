@@ -17,6 +17,17 @@ var app = app || {};
 		// =======Remove this once you start integrating with appacitive===========
 		localStorage: new Backbone.LocalStorage('todos-backbone'),
 
+		// Todos are sorted by their original insertion order.
+		// ======Change this while integrating with Appacitvie=======
+		comparator: function (todo) {
+			return todo.get('order');
+		},
+
+		
+		//
+		// =========Add create function here===============
+		//
+
 		// Filter down the list of all todo items that are finished.
 		completed: function () {
 			return this.filter(function (todo) {
@@ -36,16 +47,7 @@ var app = app || {};
 		nextOrder: function () {
 			if (!this.length) return 1;
 			return this.last().get('order') + 1;
-		},
-
-		// Todos are sorted by their original insertion order.
-		comparator: function (todo) {
-			return todo.get('order');
 		}
-
-		//
-		// =========Add create function here===============
-		//
 	});
 
 	// Create our global collection of **Todos**.

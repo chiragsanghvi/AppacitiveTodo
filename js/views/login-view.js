@@ -131,7 +131,7 @@ var app = app || {};
         firstname: username
       });
 
-      window.localStorage["backbone-user"] = app.user.toJSON();
+      window.localStorage["backbone-user"] = JSON.stringify(app.user.toJSON());
 
       new app.TodosView();
       self.undelegateEvents();
@@ -177,7 +177,7 @@ var app = app || {};
           lastname: lastName
       });
 
-      window.localStorage["backbone-user"] = app.user.toJSON();
+      window.localStorage["backbone-user"] = JSON.stringify(app.user.toJSON());
 
       new app.TodosView();
       self.undelegateEvents();

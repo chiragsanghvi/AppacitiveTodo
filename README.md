@@ -2,6 +2,8 @@
 
 A simple todo app backed by [Appacitive Cloud Platform](http://www.appacitive.com) and uses [Appacitive Javascript SDK](http://devcenter.appacitive.com/javascript/downloads/) for managing application data. 
 
+You can find the [demo here](http://jstodo.appacitive.com) 
+
 This app demonstrates ***Data Store*** and ***Users*** features provided by the Appacitive Javascript SDK.
 
 ### Getting Started

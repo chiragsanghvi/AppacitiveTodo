@@ -5,14 +5,15 @@ var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
 Appacitive.initialize({ 
-	apikey: "{{API Key}}", 
+	apikey: "sjzGiu1HcfuzvZAFNWQNsrizoflOUhA2qHxycfQ4Pd0=", 
 	env: "sandbox", 
 	appId: "{{App Id}}"
+}).then(function() {
+	$(function () {
+		'use strict';
+
+		// kick things off by creating the `App`
+		new app.AppView();
+	});
 });
 
-$(function () {
-	'use strict';
-
-	// kick things off by creating the `App`
-	new app.AppView();
-});

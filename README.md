@@ -26,7 +26,7 @@ Appacitive.initialize({
   apikey: "{{API Key}}", 
   env: "sandbox", 
   appId: "{{App Id}}"
-});
+})
 ```
 
 To get these details, open your app on [Appacitive Portal](https://portal.appacitive.com). `API key` and `App Id` for the app is available on your app's home page at the bottom.

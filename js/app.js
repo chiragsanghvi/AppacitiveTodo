@@ -4,11 +4,15 @@ var app = app || {};
 var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
-//======== Add `Appacitive.initialize` here =========
+var renderAppView = function() {
+	$(function () {
+		'use strict';
 
-$(function () {
-	'use strict';
+		// kick things off by creating the `App`
+		new app.AppView();
+	});
+}
 
-	// kick things off by creating the `App`
-	new app.AppView();
-});
+
+//======== Replace this function call with `Appacitive.initialize` here =========
+renderAppView();

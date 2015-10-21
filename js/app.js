@@ -8,12 +8,13 @@ Appacitive.initialize({
 	apikey: "sjzGiu1HcfuzvZAFNWQNsrizoflOUhA2qHxycfQ4Pd0=", 
 	env: "sandbox", 
 	appId: "{{App Id}}"
-}).then(function() {
-	$(function () {
-		'use strict';
-
-		// kick things off by creating the `App`
-		new app.AppView();
-	});
 });
+
+$(function () {
+	'use strict';
+
+	// kick things off by creating the `App`
+	new app.AppView();
+});
+
 
